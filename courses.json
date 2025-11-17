@@ -119,14 +119,14 @@
     "updated": "Updated 2025"
   },
   {
-    "title": "Java is used to develop mobile apps, web apps, desktop apps, games and much more.",
+    "title": "Java",
     "instructor": "Chan Chhaya",
-    "image": "https://beecrowd.com/wp-content/uploads/2024/04/2023-06-01-Java.jpg",
+    "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQL1nB8JZ_LXTYJ2CVrfm8dSCS-WCy9GAA2jQ&s",
     "price": "99.99",
     "category": "Backend",
-    "instructorImage": "https://avatars.githubusercontent.com/u/52463584?v=4",
+    "instructorImage": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSB6Te6hpxdXlu-l-5XB8SxMlfxT4rTUjQosQ&s",
     "originalPrice": "199.99",
-    "duration": "37",
+    "duration": "45",
     "id": 9
   }
 ]
