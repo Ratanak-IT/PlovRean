@@ -34,5 +34,9 @@
   --sidebar-accent: oklch(0.269 0 0);
 }
 
-
-
+.goog-te-banner-frame {
+  display: none !important;
+}
+body {
+  top: 0 !important;
+}
