@@ -1,9 +1,8 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-
-import Script from "next/script";
 import Navbar from "@/components/navbar/navbar";
+import { UserProvider } from "@/context/UserContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -27,48 +26,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <head>
-        <meta name="google"/>
-
-        {/* Google Translate Script */}
-        <Script
-          strategy="afterInteractive"
-          src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"
-        />
-        <Script id="google-translate-init" strategy="afterInteractive">
-          {`
-            function googleTranslateElementInit() {
-              new google.translate.TranslateElement(
-                {
-                  pageLanguage: 'en',
-                  includedLanguages: 'en,km',
-                  autoDisplay: false
-                },
-                'google_translate_element'
-              );
-            }
-          `}
-        </Script>
-
-        {/* Hide Google Translate top banner */}
-        <style>
-          {`
-            .goog-te-banner-frame { display: none !important; }
-            body { top: 0 !important; }
-          `}
-        </style>
-      </head>
-
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {/* Language Switcher */}
-        <div className="w-full bg-gray-100 p-2 flex justify-end">
-          <div id="google_translate_element"></div>
-        </div>
-
-        <Navbar wishlistCount={0} />
-        {children}
+        <UserProvider>
+          <Navbar wishlistCount={0} />
+          {children}
+        </UserProvider>
       </body>
     </html>
   );

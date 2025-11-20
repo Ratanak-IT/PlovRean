@@ -1,9 +1,9 @@
 'use client';
 
 import { useState, useEffect } from "react";
-import { Menu, X, Moon, Sun, BookOpen, Heart, Globe } from "lucide-react";
+import { Menu, X, Moon, Sun, BookOpen, Heart, User, LogOut } from "lucide-react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 interface NavbarProps {
   wishlistCount?: number;
@@ -11,28 +11,27 @@ interface NavbarProps {
 
 export default function Navbar({ wishlistCount = 0 }: NavbarProps) {
   const pathname = usePathname();
+  const router = useRouter();
 
-  const [isDark, setIsDark] = useState<boolean>(() => {
-    if (typeof window !== "undefined") {
-      return localStorage.getItem("theme") === "dark";
-    }
-    return false;
-  });
+  const [mounted, setMounted] = useState(false);
+  const [isDark, setIsDark] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-  const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
-  const [isScrolled, setIsScrolled] = useState<boolean>(false);
-
-  const [isKhmer, setIsKhmer] = useState<boolean>(() => {
-    if (typeof window !== "undefined") {
-      const storedLanguage = localStorage.getItem("language");
-      return storedLanguage ? storedLanguage === "km" : true;
-    }
-    // Default to Khmer on server render
-    return true;
-  });
-
-  // Update theme and language when either changes
+  // Safe initialization after mount
   useEffect(() => {
+    queueMicrotask(() => {
+      setMounted(true);
+      if (typeof window !== "undefined") {
+        setIsDark(localStorage.getItem("theme") === "dark");
+        setIsLoggedIn(!!localStorage.getItem("token"));
+      }
+    });
+  }, []);
+
+  useEffect(() => {
+    if (!mounted) return;
     if (isDark) {
       document.documentElement.classList.add("dark");
       localStorage.setItem("theme", "dark");
@@ -40,7 +39,7 @@ export default function Navbar({ wishlistCount = 0 }: NavbarProps) {
       document.documentElement.classList.remove("dark");
       localStorage.setItem("theme", "light");
     }
-  }, [isDark]);
+  }, [isDark, mounted]);
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 10);
@@ -53,21 +52,16 @@ export default function Navbar({ wishlistCount = 0 }: NavbarProps) {
     { href: "/course", name: "ថ្នាក់សិក្សា" },
     { href: "/about", name: "អំពីយើង" },
     { href: "/contact", name: "ទាក់ទង" },
-    { href: "/quiz", name: "លំហាត់" },
+    ...(isLoggedIn ? [{ href: "/quiz", name: "លំហាត់" }] : []),
   ];
 
-  const handleCloseMenu = () => setIsMenuOpen(false);
-
-  // Toggle language
-  const changeLanguage = (lang: "km" | "en") => {
-    localStorage.setItem("language", lang); // Store the language in localStorage
-    setIsKhmer(lang === "km");
-    const select = document.querySelector("select.goog-te-combo") as HTMLSelectElement;
-    if (select) {
-      select.value = lang;
-      select.dispatchEvent(new Event("change"));
-    }
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    setIsLoggedIn(false);
+    router.push("/login");
   };
+
+  if (!mounted) return null; // prevent SSR mismatch
 
   return (
     <header
@@ -117,55 +111,63 @@ export default function Navbar({ wishlistCount = 0 }: NavbarProps) {
           <div className="flex items-center gap-2 md:gap-4">
 
             {/* Wishlist */}
-            <Link
-              href="/wishlist"
-              className="relative p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-            >
-              <Heart className="w-5 h-5 text-gray-700 dark:text-gray-300" />
-              {wishlistCount > 0 && (
-                <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">
-                  {wishlistCount}
-                </span>
-              )}
-            </Link>
-
-            {/* Language Toggle */}
-            <button
-              onClick={() => {
-                changeLanguage(isKhmer ? "en" : "km");
-              }}
-              aria-label="Change Language"
-              className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-            >
-              <Globe className="w-5 h-5 text-gray-700 dark:text-gray-300" />
-            </button>
+            {isLoggedIn && (
+              <Link
+                href="/wishlist"
+                className="relative p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+              >
+                <Heart className="w-5 h-5 text-gray-700 dark:text-gray-300" />
+                {wishlistCount > 0 && (
+                  <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">
+                    {wishlistCount}
+                  </span>
+                )}
+              </Link>
+            )}
 
             {/* Theme toggle */}
             <button
               onClick={() => setIsDark(!isDark)}
-              className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+              className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800"
             >
-              {isDark ? (
-                <Sun className="w-5 h-5 text-gray-200" />
-              ) : (
-                <Moon className="w-5 h-5 text-gray-700" />
-              )}
+              {isDark ? <Sun className="w-5 h-5 text-gray-200" /> : <Moon className="w-5 h-5 text-gray-700" />}
             </button>
 
-            <Link href="/login" className="hidden md:flex bg-indigo-500 hover:bg-indigo-600 text-white rounded-lg px-6 py-2">
-              Login
-            </Link>
-            <Link href="/register" className="hidden md:flex bg-indigo-500 hover:bg-indigo-600 text-white rounded-lg px-6 py-2">
-              Register
-            </Link>
+            {/* Login/Register */}
+            {!isLoggedIn && (
+              <>
+                <Link href="/login" className="hidden md:flex bg-indigo-500 hover:bg-indigo-600 text-white rounded-lg px-6 py-2">
+                  Login
+                </Link>
+                <Link href="/register" className="hidden md:flex bg-indigo-500 hover:bg-indigo-600 text-white rounded-lg px-6 py-2">
+                  Register
+                </Link>
+              </>
+            )}
 
-            {/* Mobile menu */}
+            {/* Account + Logout */}
+            {isLoggedIn && (
+              <>
+                <Link href="/account" className="hidden md:flex items-center gap-2 text-gray-700 dark:text-gray-300">
+                  <User className="w-5 h-5" /> Account
+                </Link>
+                <button
+                  onClick={handleLogout}
+                  className="hidden md:flex items-center gap-2 text-red-500 hover:text-red-600"
+                >
+                  <LogOut className="w-5 h-5" /> Logout
+                </button>
+              </>
+            )}
+
+            {/* Mobile menu button */}
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               className="lg:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800"
             >
               {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
+
           </div>
         </div>
 
@@ -179,8 +181,8 @@ export default function Navbar({ wishlistCount = 0 }: NavbarProps) {
                   <Link
                     key={item.href}
                     href={item.href}
-                    onClick={handleCloseMenu}
-                    className={`px-2 py-1 text-left transition ${
+                    onClick={() => setIsMenuOpen(false)}
+                    className={`px-2 py-1 transition ${
                       isActive
                         ? "text-blue-500 dark:text-blue-400"
                         : "text-gray-700 dark:text-gray-300 hover:text-indigo-500 dark:hover:text-indigo-400"
@@ -190,24 +192,38 @@ export default function Navbar({ wishlistCount = 0 }: NavbarProps) {
                   </Link>
                 );
               })}
-              <div className="flex gap-2 pt-2">
-                <Link href="/login" onClick={handleCloseMenu}
-                  className="bg-indigo-500 hover:bg-indigo-600 text-white rounded-lg flex-1 py-2 text-center">
-                  Login
-                </Link>
-                <Link href="/register" onClick={handleCloseMenu}
-                  className="bg-indigo-500 hover:bg-indigo-600 text-white rounded-lg flex-1 py-2 text-center">
-                  Register
-                </Link>
-              </div>
+
+              {!isLoggedIn && (
+                <div className="flex gap-2 pt-2">
+                  <Link href="/login" onClick={() => setIsMenuOpen(false)}
+                    className="bg-indigo-500 hover:bg-indigo-600 text-white rounded-lg flex-1 py-2 text-center">
+                    Login
+                  </Link>
+                  <Link href="/register" onClick={() => setIsMenuOpen(false)}
+                    className="bg-indigo-500 hover:bg-indigo-600 text-white rounded-lg flex-1 py-2 text-center">
+                    Register
+                  </Link>
+                </div>
+              )}
+
+              {isLoggedIn && (
+                <div className="flex flex-col gap-2 pt-2">
+                  <Link href="/account" onClick={() => setIsMenuOpen(false)}
+                    className="flex items-center gap-2 px-2 text-gray-700 dark:text-gray-300">
+                    <User className="w-5 h-5" /> Account
+                  </Link>
+                  <button
+                    onClick={handleLogout}
+                    className="flex items-center gap-2 px-2 text-red-500"
+                  >
+                    <LogOut className="w-5 h-5" /> Logout
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         )}
-
       </nav>
-
-      {/* hidden container required for google translate */}
-      <div id="google_translate_element" className="hidden"></div>
     </header>
   );
 }
