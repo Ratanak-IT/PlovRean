@@ -1,11 +1,13 @@
-// AddCourseForm.tsx
+"use client";
 
 import { useState, FormEvent } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X } from "lucide-react";
+import { supabase } from "@/lib/supabaseClient";
 
 interface AddCourseFormProps {
-  onAdd: () => void;  // Define the correct type for the 'onAdd' prop
+  onAdd: () => void;
+  onClose?: () => void;
 }
 
 type Toast = {
@@ -15,173 +17,197 @@ type Toast = {
 };
 
 export default function AddCourseForm({ onAdd }: AddCourseFormProps) {
+  const [isOpen, setIsOpen] = useState(false);
+  const [toastList, setToastList] = useState<Toast[]>([]);
+  const [loading, setLoading] = useState(false);
+
   const [formData, setFormData] = useState({
     title: "",
     instructor: "",
-    image: "",
     price: "",
     category: "",
-    instructorImage: "",
-    originalPrice: "",
     duration: "",
+    originalprice: "",
+    image: "",
+    instructorimage: "",
   });
-
-  const [toasts, setToasts] = useState<Toast[]>([]);
 
   const showToast = (message: string, type: "success" | "error") => {
     const id = Date.now();
-    setToasts((prev) => [...prev, { id, message, type }]);
-    setTimeout(() => setToasts((prev) => prev.filter((t) => t.id !== id)), 4000);
+    setToastList((prev) => [...prev, { id, message, type }]);
+    setTimeout(() => {
+      setToastList((prev) => prev.filter((toast) => toast.id !== id));
+    }, 3000);
   };
 
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+  const resetForm = () => {
+    setFormData({
+      title: "",
+      instructor: "",
+      price: "",
+      category: "",
+      duration: "",
+      originalprice: "",
+      image: "",
+      instructorimage: "",
+    });
+  };
+
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
+    setLoading(true);
 
-    // validation: all fields required
-    const isEmpty = Object.values(formData).some((v) => v.trim() === "");
-    if (isEmpty) {
-      showToast("Please fill in all fields before adding a course.", "error");
-      return;
-    }
+    const { error } = await supabase.from("courses").insert({
+      title: formData.title,
+      instructor: formData.instructor,
+      price: Number(formData.price),
+      category: formData.category,
+      duration: formData.duration,
+      originalprice: Number(formData.originalprice),
+      image: formData.image,
+      instructorimage: formData.instructorimage,
+      created_at: new Date(),
+    });
 
-    try {
-      const res = await fetch("/api/courses", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
+    setLoading(false);
 
-      if (!res.ok) throw new Error("Failed to add course");
+    if (error) return showToast(error.message, "error");
 
-      setFormData({
-        title: "",
-        instructor: "",
-        image: "",
-        price: "",
-        category: "",
-        instructorImage: "",
-        originalPrice: "",
-        duration: "",
-      });
-
-      showToast("Course added successfully!", "success");
-      onAdd(); // Invoke the 'onAdd' prop after successfully adding a course
-    } catch (err) {
-      console.error(err);
-      showToast("Error adding course. Please try again.", "error");
-    }
+    showToast("Course added successfully!", "success");
+    resetForm();
+    setIsOpen(false);
+    onAdd();
   };
 
   return (
-    <div className="relative">
-      {/* Toast container */}
-      <div className="fixed top-5 right-5 z-50 flex flex-col gap-2">
-        <AnimatePresence>
-          {toasts.map((toast) => (
-            <motion.div
-              key={toast.id}
-              initial={{ opacity: 0, x: 50 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: 50 }}
-              className={`px-4 py-3 rounded shadow text-white flex items-center justify-between min-w-[250px] ${
-                toast.type === "success" ? "bg-green-500" : "bg-red-500"
-              }`}
-            >
-              <span>{toast.message}</span>
-              <button
-                className="ml-4"
-                onClick={() =>
-                  setToasts((prev) => prev.filter((t) => t.id !== toast.id))
-                }
-              >
-                <X className="w-4 h-4" />
-              </button>
-            </motion.div>
-          ))}
-        </AnimatePresence>
-      </div>
-
-      {/* Form */}
-      <form
-        onSubmit={handleSubmit}
-        className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-white/60 dark:bg-neutral-800/40 backdrop-blur-xl p-10 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-white/40 dark:border-neutral-700/40 transition-all duration-300"
+    <>
+      <button
+        className="px-4 py-2 bg-blue-600 text-white rounded"
+        onClick={() => setIsOpen(true)}
       >
-        <input
-          type="text"
-          placeholder="Course Title"
-          value={formData.title}
-          onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-          className="input-glass"
-        />
+        + Add Course
+      </button>
 
-        <input
-          type="text"
-          placeholder="Course Thumbnail URL"
-          value={formData.image}
-          onChange={(e) => setFormData({ ...formData, image: e.target.value })}
-          className="input-glass"
-        />
-
-        <input
-          type="text"
-          placeholder="Instructor Name"
-          value={formData.instructor}
-          onChange={(e) => setFormData({ ...formData, instructor: e.target.value })}
-          className="input-glass"
-        />
-
-        <input
-          type="text"
-          placeholder="Instructor Image URL"
-          value={formData.instructorImage}
-          onChange={(e) =>
-            setFormData({ ...formData, instructorImage: e.target.value })
-          }
-          className="input-glass"
-        />
-
-        <input
-          type="number"
-          placeholder="Original Price ($)"
-          value={formData.originalPrice}
-          onChange={(e) =>
-            setFormData({ ...formData, originalPrice: e.target.value })
-          }
-          className="input-glass"
-        />
-
-        <input
-          type="number"
-          placeholder="Sale Price ($)"
-          value={formData.price}
-          onChange={(e) => setFormData({ ...formData, price: e.target.value })}
-          className="input-glass"
-        />
-
-        <input
-          type="text"
-          placeholder="Category (ex: UI/UX, Web Dev)"
-          value={formData.category}
-          onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-          className="input-glass"
-        />
-
-        <input
-          type="text"
-          placeholder="Duration (ex: 10h 45m)"
-          value={formData.duration}
-          onChange={(e) => setFormData({ ...formData, duration: e.target.value })}
-          className="input-glass"
-        />
-
-        <div className="md:col-span-2 flex justify-end pt-3">
-          <button
-            className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold px-10 py-3 rounded-xl shadow-xl hover:shadow-[0_0_25px_rgba(109,40,217,0.45)] transition-all duration-300 transform hover:-translate-y-1 active:scale-95"
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            className="fixed inset-0 bg-black/40 flex items-center justify-center z-50"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
           >
-            Add Course
-          </button>
-        </div>
-      </form>
-    </div>
+            <motion.div
+              className="bg-white p-6 rounded-lg w-full max-w-xl space-y-4"
+              initial={{ scale: 0.8 }}
+              animate={{ scale: 1 }}
+              exit={{ scale: 0.8 }}
+            >
+              <div className="flex justify-between">
+                <h2 className="text-xl font-semibold">Add New Course</h2>
+                <button onClick={() => setIsOpen(false)}>
+                  <X />
+                </button>
+              </div>
+
+              <form onSubmit={handleSubmit} className="space-y-3">
+                <input
+                  required
+                  type="text"
+                  placeholder="Course title"
+                  className="input"
+                  value={formData.title}
+                  onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                />
+
+                <input
+                  required
+                  type="text"
+                  placeholder="Instructor name"
+                  className="input"
+                  value={formData.instructor}
+                  onChange={(e) => setFormData({ ...formData, instructor: e.target.value })}
+                />
+
+                <input
+                  required
+                  type="number"
+                  placeholder="Price"
+                  className="input"
+                  value={formData.price}
+                  onChange={(e) => setFormData({ ...formData, price: e.target.value })}
+                />
+
+                <input
+                  required
+                  type="text"
+                  placeholder="Category"
+                  className="input"
+                  value={formData.category}
+                  onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                />
+
+                <input
+                  required
+                  type="text"
+                  placeholder="Duration (e.g. 20 hours)"
+                  className="input"
+                  value={formData.duration}
+                  onChange={(e) => setFormData({ ...formData, duration: e.target.value })}
+                />
+
+                <input
+                  required
+                  type="number"
+                  placeholder="Original price"
+                  className="input"
+                  value={formData.originalprice}
+                  onChange={(e) => setFormData({ ...formData, originalprice: e.target.value })}
+                />
+
+                <input
+                  required
+                  type="url"
+                  placeholder="Course Image URL"
+                  className="input"
+                  value={formData.image}
+                  onChange={(e) => setFormData({ ...formData, image: e.target.value })}
+                />
+
+                <input
+                  required
+                  type="url"
+                  placeholder="Instructor Image URL"
+                  className="input"
+                  value={formData.instructorimage}
+                  onChange={(e) => setFormData({ ...formData, instructorimage: e.target.value })}
+                />
+
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700"
+                >
+                  {loading ? "Adding..." : "Add Course"}
+                </button>
+              </form>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Toast Messages */}
+      <div className="fixed top-4 right-4 space-y-2 z-50">
+        {toastList.map((toast) => (
+          <div
+            key={toast.id}
+            className={`px-4 py-2 text-white rounded shadow ${
+              toast.type === "success" ? "bg-green-600" : "bg-red-600"
+            }`}
+          >
+            {toast.message}
+          </div>
+        ))}
+      </div>
+    </>
   );
 }

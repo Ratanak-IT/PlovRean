@@ -102,40 +102,6 @@
     "updated": "Updated 2025"
   },
   {
-    "id": 7,
-    "title": "AWS Cloud Practitioner Complete Course",
-    "instructor": "Robert Taylor",
-    "instructorImage": "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=100&q=80",
-    "rating": 4.8,
-    "reviews": 11230,
-    "students": 42560,
-    "price": 89.99,
-    "originalPrice": 199.99,
-    "image": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=800&q=80",
-    "category": "Cloud Computing",
-    "level": "Beginner",
-    "duration": "36 hours",
-    "bestseller": true,
-    "updated": "Updated 2025"
-  },
-  {
-    "title": "Complete Web Development Bootcamp 2025",
-    "instructor": "Sarah Johnson",
-    "instructorImage": "https://beecrowd.com/wp-content/uploads/2024/04/2022-07-19-Melhores-cursos-de-Python.jpg",
-    "rating": 4.9,
-    "reviews": 12450,
-    "students": 45230,
-    "price": 89.99,
-    "originalPrice": 159.99,
-    "image": "https://beecrowd.com/wp-content/uploads/2024/04/2022-07-19-Melhores-cursos-de-Python.jpg",
-    "category": "Web Development",
-    "level": "Beginner",
-    "duration": "42 hours",
-    "bestseller": true,
-    "updated": "Updated 2025",
-    "id": 9
-  },
-  {
     "title": "Java",
     "instructor": "Chan Chhaya",
     "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQL1nB8JZ_LXTYJ2CVrfm8dSCS-WCy9GAA2jQ&s",
@@ -147,17 +113,6 @@
     "id": 8
   },
   {
-    "title": "Linux",
-    "instructor": "Kim Chansokpeng",
-    "image": "https://itequia.com/wp-content/uploads/2024/07/imagen-e1760013257334.webp",
-    "price": "60",
-    "category": "Cyber",
-    "instructorImage": "https://img-c.udemycdn.com/course/750x422/5181942_dc28_14.jpg",
-    "originalPrice": "89.99",
-    "duration": "43",
-    "id": 10
-  },
-  {
     "title": "Spring boot",
     "instructor": "Chan Chhaya",
     "image": "https://www.adm.ee/wordpress/wp-content/uploads/2023/12/Spring.png",
@@ -167,5 +122,16 @@
     "originalPrice": "89.99",
     "duration": "43",
     "id": 11
+  },
+  {
+    "title": "Spring",
+    "instructor": "Chan Chhaya",
+    "image": "https://www.adm.ee/wordpress/wp-content/uploads/2023/12/Spring.png",
+    "price": "12",
+    "category": "Java",
+    "instructorimage": "https://avatars.githubusercontent.com/u/52463584?v=4",
+    "originalprice": "34",
+    "duration": "12",
+    "id": 12
   }
 ]

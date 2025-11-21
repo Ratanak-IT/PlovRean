@@ -1,14 +1,18 @@
-import { useEffect, useState } from "react";
+"use client";
+
+import { FC, useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Star, Clock, Users, TrendingUp } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { Star, Clock, Users, TrendingUp } from "lucide-react";
+import { supabase } from "@/lib/supabaseClient";
+
 
 export interface CourseType {
   id: number;
   title: string;
   instructor: string;
-  instructorImage?: string;
+  instructorimage?: string;
   rating?: number;
   reviews?: number;
   students?: number;
@@ -25,7 +29,7 @@ export interface CourseCardProps {
   onCourseClick?: (courseId: number) => void;
 }
 
-export default function CourseCard({ onCourseClick }: CourseCardProps) {
+const CourseCard: FC<CourseCardProps> = ({ onCourseClick }) => {
   const [courses, setCourses] = useState<CourseType[]>([]);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
@@ -41,24 +45,30 @@ export default function CourseCard({ onCourseClick }: CourseCardProps) {
   useEffect(() => {
     async function fetchCourses() {
       try {
-        const res = await fetch("/api/courses", { cache: "no-store" });
-        const data: CourseType[] = await res.json();
-        setCourses(data);
+        const { data, error } = await supabase
+          .from("courses")
+          .select("*")
+          .order("id", { ascending: false });
+
+        if (error) throw error;
+        setCourses(data || []);
       } catch (error) {
         console.error("Failed to fetch courses:", error);
       } finally {
         setLoading(false);
       }
     }
+
     fetchCourses();
   }, []);
 
-  if (loading) return (
-    <div className="text-center py-10">
-      <div className="spinner-border animate-spin border-4 border-t-4 border-blue-600 rounded-full w-12 h-12 mx-auto"></div>
-      <p>Loading courses...</p>
-    </div>
-  );
+  if (loading)
+    return (
+      <div className="text-center py-10">
+        <div className="spinner-border animate-spin border-4 border-t-4 border-blue-600 rounded-full w-12 h-12 mx-auto"></div>
+        <p>Loading courses...</p>
+      </div>
+    );
 
   return (
     <section className="py-12 md:py-16 bg-gray-50 dark:bg-gray-900">
@@ -66,7 +76,10 @@ export default function CourseCard({ onCourseClick }: CourseCardProps) {
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
           {courses.map((course, index) => {
             const discount = course.originalPrice
-              ? Math.round(((course.originalPrice - course.price) / course.originalPrice) * 100)
+              ? Math.round(
+                  ((course.originalPrice - course.price) / course.originalPrice) *
+                    100
+                )
               : 0;
 
             return (
@@ -84,7 +97,7 @@ export default function CourseCard({ onCourseClick }: CourseCardProps) {
                   <div className="relative overflow-hidden aspect-video">
                     <Image
                       src={course.image || "/images/course-placeholder.png"}
-                      alt={course.title}
+                      alt={course.title || "Course image"}
                       width={800}
                       height={450}
                       className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
@@ -123,8 +136,11 @@ export default function CourseCard({ onCourseClick }: CourseCardProps) {
                     <div className="flex items-center gap-2 mb-3">
                       <div className="relative w-8 h-8 rounded-full overflow-hidden">
                         <Image
-                          src={course.instructorImage || "/images/instructor-placeholder.png"}
-                          alt={course.instructor}
+                          src={
+                            course.instructorimage ||
+                            "/images/instructor-placeholder.png"
+                          }
+                          alt={course.instructor || "Instructor"}
                           width={32}
                           height={32}
                           className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
@@ -151,12 +167,14 @@ export default function CourseCard({ onCourseClick }: CourseCardProps) {
                     <div className="flex items-center gap-4 mb-4 text-gray-600 dark:text-gray-400 text-sm">
                       <div className="flex items-center gap-1">
                         <Clock className="w-4 h-4" />
-                        <span>{course.duration || "N/A"}</span>
+                        <span>{course.duration || "N/A"} hours</span>
                       </div>
                       <div className="flex items-center gap-1">
                         <Users className="w-4 h-4" />
                         <span>
-                          {course.students ? (course.students / 1000).toFixed(1) + "k" : "0k"}
+                          {course.students
+                            ? (course.students / 1000).toFixed(1) + "k"
+                            : "0k"}
                         </span>
                       </div>
                     </div>
@@ -187,4 +205,6 @@ export default function CourseCard({ onCourseClick }: CourseCardProps) {
       </div>
     </section>
   );
-}
+};
+
+export default CourseCard;

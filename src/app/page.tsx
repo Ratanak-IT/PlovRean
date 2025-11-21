@@ -38,6 +38,8 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* Pass the prop correctly */}
       <CourseCard onCourseClick={onCourseClick} />
     </>
   );
