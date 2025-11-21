@@ -1,12 +1,9 @@
-"use client";
-
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Star, Clock, Users, TrendingUp } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 
-// Course type
 export interface CourseType {
   id: number;
   title: string;
@@ -24,7 +21,6 @@ export interface CourseType {
   bestseller?: boolean;
 }
 
-// Props
 export interface CourseCardProps {
   onCourseClick?: (courseId: number) => void;
 }
@@ -57,7 +53,12 @@ export default function CourseCard({ onCourseClick }: CourseCardProps) {
     fetchCourses();
   }, []);
 
-  if (loading) return <p className="text-center py-10">Loading courses...</p>;
+  if (loading) return (
+    <div className="text-center py-10">
+      <div className="spinner-border animate-spin border-4 border-t-4 border-blue-600 rounded-full w-12 h-12 mx-auto"></div>
+      <p>Loading courses...</p>
+    </div>
+  );
 
   return (
     <section className="py-12 md:py-16 bg-gray-50 dark:bg-gray-900">
@@ -65,9 +66,7 @@ export default function CourseCard({ onCourseClick }: CourseCardProps) {
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
           {courses.map((course, index) => {
             const discount = course.originalPrice
-              ? Math.round(
-                  ((course.originalPrice - course.price) / course.originalPrice) * 100
-                )
+              ? Math.round(((course.originalPrice - course.price) / course.originalPrice) * 100)
               : 0;
 
             return (
@@ -82,7 +81,6 @@ export default function CourseCard({ onCourseClick }: CourseCardProps) {
                   onClick={() => handleCourseClick(course.id)}
                   className="overflow-hidden bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm hover:shadow-2xl transition-all duration-300 group cursor-pointer h-full flex flex-col"
                 >
-                  {/* Image */}
                   <div className="relative overflow-hidden aspect-video">
                     <Image
                       src={course.image || "/images/course-placeholder.png"}
@@ -92,7 +90,6 @@ export default function CourseCard({ onCourseClick }: CourseCardProps) {
                       className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                       unoptimized
                     />
-                    {/* Badges */}
                     <div className="absolute top-3 left-3 flex flex-col gap-2">
                       {course.bestseller && (
                         <span className="inline-flex items-center gap-1 px-3 py-1 bg-yellow-400 text-gray-900 rounded-full text-xs font-medium">
@@ -106,7 +103,6 @@ export default function CourseCard({ onCourseClick }: CourseCardProps) {
                         </span>
                       )}
                     </div>
-                    {/* Discount */}
                     {discount > 0 && (
                       <div className="absolute top-3 right-3">
                         <span className="inline-flex items-center px-3 py-1 bg-red-500 text-white rounded-full text-xs font-medium">
@@ -116,7 +112,6 @@ export default function CourseCard({ onCourseClick }: CourseCardProps) {
                     )}
                   </div>
 
-                  {/* Content */}
                   <div className="p-5 flex flex-col flex-grow">
                     <p className="text-indigo-500 dark:text-indigo-400 mb-2 text-sm">
                       {course.category}
@@ -125,7 +120,6 @@ export default function CourseCard({ onCourseClick }: CourseCardProps) {
                       {course.title}
                     </h3>
 
-                    {/* Instructor */}
                     <div className="flex items-center gap-2 mb-3">
                       <div className="relative w-8 h-8 rounded-full overflow-hidden">
                         <Image
@@ -142,7 +136,6 @@ export default function CourseCard({ onCourseClick }: CourseCardProps) {
                       </span>
                     </div>
 
-                    {/* Rating & Reviews */}
                     <div className="flex items-center gap-2 mb-3">
                       <div className="flex items-center gap-1">
                         <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
@@ -155,7 +148,6 @@ export default function CourseCard({ onCourseClick }: CourseCardProps) {
                       </span>
                     </div>
 
-                    {/* Duration & Students */}
                     <div className="flex items-center gap-4 mb-4 text-gray-600 dark:text-gray-400 text-sm">
                       <div className="flex items-center gap-1">
                         <Clock className="w-4 h-4" />
@@ -171,7 +163,6 @@ export default function CourseCard({ onCourseClick }: CourseCardProps) {
 
                     <div className="flex-grow" />
 
-                    {/* Price */}
                     <div className="flex items-center justify-between pt-4 border-t border-gray-200 dark:border-gray-700">
                       <div className="flex items-center gap-2">
                         <span className="text-gray-900 dark:text-white font-semibold">
