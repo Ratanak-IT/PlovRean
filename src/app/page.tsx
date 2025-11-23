@@ -9,7 +9,7 @@ import { useRouter } from "next/navigation";
 export default function Home() {
   const router = useRouter();
 
-  const onCourseClick = (courseId: number) => {
+  const onCourseClick = (courseId: string) => {
     router.push(`/courses/${courseId}`);
   };
 
@@ -39,7 +39,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Pass the prop correctly */}
       <CourseCard onCourseClick={onCourseClick} />
     </>
   );
