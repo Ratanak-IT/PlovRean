@@ -5,6 +5,11 @@ import { CourseCategories } from "@/components/coursecard/CourseCategories";
 import CourseCard from "@/components/coursecard/CourseCard";
 import OurContent from "@/components/ourcontent/ourcontent";
 
+// export const metadata = {
+//   title: 'NextGen-Shop',
+//   description: 'Your Ultimate Online Store for Electronics and Gadgets',
+// };
+
 export default function Home() {
   return (
     <>

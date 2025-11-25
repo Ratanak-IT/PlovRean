@@ -4,6 +4,7 @@ import { useState, FormEvent } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, BookOpen, Clock, DollarSign, User, Link2, Trophy, List, FileText } from "lucide-react";
 import { supabase } from "@/lib/supabaseClient";
+import toast from "react-hot-toast";
 
 interface AddCourseFormProps {
   onAdd: () => void;
@@ -86,14 +87,14 @@ export default function AddCourseForm({ onAdd, onClose }: AddCourseFormProps) {
 
       if (error) throw error;
 
-      showToast("Course added successfully!", "success");
+      toast.success("Course added successfully!");
       resetForm();
       setIsOpen(false);
       onAdd();
       onClose?.();
     } catch (err: unknown) {
       if (err instanceof Error) {
-        showToast(err.message, "error");
+        toast.error(err.message+"Failed to save profile.");
       } else {
         showToast("Failed to add course", "error");
       }
