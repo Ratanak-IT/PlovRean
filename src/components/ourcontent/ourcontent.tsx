@@ -4,7 +4,9 @@ interface OurContentProps {
   title?: string;
   text?: string;
 }
+
 export default function OurContent(props: OurContentProps) {
+  
   return (
     <>
     <div >

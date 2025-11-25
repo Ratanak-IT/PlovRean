@@ -109,16 +109,16 @@ export default function AccountPage() {
   };
 
   return (
-    <div className="max-w-3xl mx-auto p-4 mt-12">
+    <div className="max-w-3xl mx-auto p-4 mt-12 min-h-screen">
       {/* Banner + Avatar */}
       <div className="relative w-full h-48 rounded-xl overflow-hidden mb-8 bg-gradient-to-r from-indigo-500 to-purple-600 flex items-center justify-center">
-        <div className="absolute -bottom-12 w-32 h-32 rounded-full border-4 border-white overflow-hidden bg-gray-200">
+        <div className="absolute top-15 w-32 h-32 rounded-full border-4 border-white overflow-hidden bg-gray-200">
           <Image
             src={previewUrl || getPublicUrl(avatarUrl)}
             width={128}
             height={128}
             alt="avatar"
-            className="object-cover"
+            className="object-cover w-full h-full"
           />
         </div>
       </div>

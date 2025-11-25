@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
 import toast, { Toaster } from "react-hot-toast";
 import { Eye, EyeOff, Chrome } from "lucide-react";
+import Link from "next/link";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -139,9 +140,9 @@ export default function RegisterPage() {
 
         <p className="mt-4 text-center text-sm text-gray-500 dark:text-gray-300">
           Already have an account?{" "}
-          <a href="/login" className="text-indigo-500 hover:underline">
+          <Link href="/login" className="text-indigo-500 hover:underline">
             Login
-          </a>
+          </Link>
         </p>
       </div>
     </div>

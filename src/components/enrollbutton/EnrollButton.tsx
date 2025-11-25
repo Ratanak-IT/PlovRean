@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabaseClient";
 import { toast } from "react-hot-toast";
+import { useRouter } from "next/navigation";
 
 interface EnrollButtonProps {
   courseId: string;
@@ -12,45 +13,40 @@ export default function EnrollButton({ courseId }: EnrollButtonProps) {
   const [enrolled, setEnrolled] = useState(false);
   const [loading, setLoading] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
+  const router = useRouter();
 
-  // Check if user is already enrolled
+  // Check login + enrollment
   useEffect(() => {
     const checkEnrollment = async () => {
-      try {
-        const {
-          data: { user },
-        } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
 
-        if (!user) return;
-        setUserId(user.id);
+      if (!user) return; // user not logged in
+      setUserId(user.id);
 
-        const { data, error } = await supabase
-          .from("enrollments")
-          .select("*")
-          .eq("user_id", user.id)
-          .eq("course_id", courseId)
-          .single();
+      const { data } = await supabase
+        .from("enrollments")
+        .select("*")
+        .eq("user_id", user.id)
+        .eq("course_id", courseId)
+        .maybeSingle();
 
-        if (!error && data) setEnrolled(true);
-      } catch (err: unknown) {
-        console.error("Enrollment check error:", err);
-      }
+      if (data) setEnrolled(true);
     };
 
     checkEnrollment();
   }, [courseId]);
 
-  // Handle enroll/unenroll toggle
   const handleToggleEnroll = async () => {
     if (!userId) {
-      toast.error("Please log in first.");
+      router.push("/login");
       return;
     }
 
     setLoading(true);
     try {
       if (enrolled) {
-        // Unenroll
         const { error } = await supabase
           .from("enrollments")
           .delete()
@@ -59,10 +55,9 @@ export default function EnrollButton({ courseId }: EnrollButtonProps) {
 
         if (error) throw error;
 
-        toast.success("You have unenrolled from the course.");
+        toast.success("Unenrolled successfully.");
         setEnrolled(false);
       } else {
-        // Enroll
         const { error } = await supabase.from("enrollments").insert({
           course_id: courseId,
           user_id: userId,
@@ -74,23 +69,41 @@ export default function EnrollButton({ courseId }: EnrollButtonProps) {
         toast.success("Enrolled successfully!");
         setEnrolled(true);
       }
-    } catch (err: unknown) {
-      if (err instanceof Error) toast.error(err.message);
-      else toast.error("Failed to update enrollment.");
-      console.error("Enroll/Unenroll error:", err);
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : "Enrollment failed.";
+      toast.error(message);
     } finally {
       setLoading(false);
     }
   };
 
+  // button text depending on user state
+  const text = !userId
+    ? "Login to Enroll"
+    : loading
+    ? "Processing..."
+    : enrolled
+    ? "Unenroll"
+    : "Enroll Now";
+
+  // disabled when not logged in or loading
+  const disabled = loading || !userId;
+
   return (
     <button
       onClick={handleToggleEnroll}
-      disabled={loading}
-      className={`px-8 py-4 rounded-full font-bold text-lg shadow-lg transition transform hover:scale-105
-        ${enrolled ? "bg-red-500 text-white hover:shadow-xl" : "bg-indigo-600 text-white hover:shadow-xl"}`}
+      disabled={disabled}
+      className={`px-8 py-4 rounded-full font-bold text-lg shadow-lg transition
+        ${
+          disabled
+            ? "bg-gray-400 cursor-not-allowed"
+            : enrolled
+            ? "bg-red-500 text-white hover:scale-105"
+            : "bg-indigo-600 text-white hover:scale-105"
+        }`}
     >
-      {loading ? "Processing..." : enrolled ? "Unenroll" : "Enroll Now"}
+      {text}
     </button>
   );
 }

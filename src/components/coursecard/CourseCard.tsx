@@ -1,11 +1,13 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
-import { useRouter } from "next/navigation";
+// import { motion } from "framer-motion";
+// import { useRouter } from "next/navigation";
 import { Star, Clock, Users, BookOpen } from "lucide-react";
 import { supabase } from "@/lib/supabaseClient";
 import Image from "next/image";
+import Link from "next/link";
+// import { div } from "framer-motion/client";
 
 export interface CourseType {
   id: string;
@@ -35,8 +37,7 @@ export default function CourseCard({ searchTerm = "", course, limit }: CourseCar
   const [courses, setCourses] = useState<CourseType[]>([]);
   const [filteredCourses, setFilteredCourses] = useState<CourseType[]>([]);
   const [loading, setLoading] = useState(true);
-  const router = useRouter();
-
+  // const router = useRouter();
   // Fetch all courses only if no single course is passed
   useEffect(() => {
     if (course) {
@@ -89,53 +90,47 @@ export default function CourseCard({ searchTerm = "", course, limit }: CourseCar
 
   setFilteredCourses(filtered);
 }, [searchTerm, courses, course]);
-
-
-  const handleCourseClick = (id: string) => {
-    router.push(`/courses/${id}`);
-  };
-
-  if (loading) {
-    return (
-      <div className="text-center py-20 dark:bg-gray-900">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-blue-600 mx-auto"></div>
-        <p className="mt-4 text-lg text-gray-600 dark:text-gray-300">
-          Loading courses...
-        </p>
-      </div>
-    );
-  }
-
+  
+    // if (loading) {
+    //   return (
+    //     <div className="text-center py-20 dark:bg-gray-900">
+    //       <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-blue-600 mx-auto"></div>
+    //       <p className="mt-4 text-lg text-gray-600 dark:text-gray-300">
+    //         Loading courses...
+    //       </p>
+    //     </div>
+    //   );
+    // }
   let renderCourses = course ? [course] : filteredCourses;
   if (limit) {
     renderCourses = renderCourses.slice(0, limit);
   }
-
-  if (renderCourses.length === 0) {
-    return (
-      <div className="text-center py-20">
-        <p className="text-xl text-gray-600 dark:text-gray-400">
-          No courses found matching <strong>{searchTerm}</strong>
-        </p>
-        <p className="mt-2 text-gray-500">Try a different search term.</p>
-      </div>
-    );
-  }
+  
+  // if (renderCourses.length === 0) {
+  //   return (
+  //     <div className="text-center py-20">
+  //       <p className="text-xl text-gray-600 dark:text-gray-400">
+  //         No courses found matching <strong>{searchTerm}</strong>
+  //       </p>
+  //       <p className="mt-2 text-gray-500">Try a different search term.</p>
+  //     </div>
+  //   );
+  // }
 
   return (
-    <section className="py-2 bg-gray-100 dark:bg-gray-900 transition-colors duration-300">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid gap-4 grid-cols-2 sm:grid-cols-2 lg:grid-cols-4">
-          {renderCourses.map((c, index) => (
-            <motion.div
-              key={c.id}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: index * 0.05, duration: 0.5 }}
-            >
-              <div
-                onClick={() => handleCourseClick(c.id)}
+    <>
+    
+    
+          {renderCourses.map((c) => (
+            // <motion.div
+            //   key={c.id}
+            //   initial={{ opacity: 0, y: 20 }}
+            //   whileInView={{ opacity: 1, y: 0 }}
+            //   viewport={{ once: true }}
+            //   transition={{ delay: index * 0.05, duration: 0.5 }}
+            // >
+            <div key={c.id}>
+              <Link href={`/courses/${c.id}`}
                 className="bg-white dark:bg-gray-800 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300 cursor-pointer flex flex-col overflow-hidden h-full border border-gray-200 dark:border-gray-700"
               >
                 {/* Image */}
@@ -199,11 +194,11 @@ export default function CourseCard({ searchTerm = "", course, limit }: CourseCar
                     </span>
                   </div>
                 </div>
-              </div>
-            </motion.div>
+              </Link>
+            {/* </motion.div> */}
+            </div>
           ))}
-        </div>
-      </div>
-    </section>
+  
+  </>
   );
 }
