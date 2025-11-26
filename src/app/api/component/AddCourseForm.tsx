@@ -2,7 +2,7 @@
 
 import { useState, FormEvent } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, BookOpen, Clock, DollarSign, User, Link2, Trophy, List, FileText } from "lucide-react";
+import { X, BookOpen, Clock, User, Link2, Trophy, List, FileText } from "lucide-react";
 import { supabase } from "@/lib/supabaseClient";
 import toast from "react-hot-toast";
 
@@ -27,8 +27,6 @@ export default function AddCourseForm({ onAdd, onClose }: AddCourseFormProps) {
   const [formData, setFormData] = useState({
     title: "",
     instructor: "",
-    price: "",
-    originalprice: "",
     category: "",
     duration: "",
     level: "Beginner" as CourseLevel,
@@ -51,8 +49,6 @@ export default function AddCourseForm({ onAdd, onClose }: AddCourseFormProps) {
     setFormData({
       title: "",
       instructor: "",
-      price: "",
-      originalprice: "",
       category: "",
       duration: "",
       level: "Beginner",
@@ -72,8 +68,6 @@ export default function AddCourseForm({ onAdd, onClose }: AddCourseFormProps) {
       const { error } = await supabase.from("courses").insert({
         title: formData.title.trim(),
         instructor: formData.instructor.trim(),
-        price: Number(formData.price),
-        originalprice: formData.originalprice ? Number(formData.originalprice) : null,
         category: formData.category.trim(),
         duration: formData.duration.trim(),
         level: formData.level,
@@ -177,40 +171,6 @@ export default function AddCourseForm({ onAdd, onClose }: AddCourseFormProps) {
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none"
                       value={formData.instructor}
                       onChange={(e) => setFormData({ ...formData, instructor: e.target.value })}
-                    />
-                  </div>
-
-                  {/* Price & Original Price */}
-                  <div className="space-y-2">
-                    <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
-                      <DollarSign size={16} />
-                      Current Price ($)
-                    </label>
-                    <input
-                      required
-                      type="number"
-                      min="0"
-                      step="0.01"
-                      placeholder="49.99"
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none"
-                      value={formData.price}
-                      onChange={(e) => setFormData({ ...formData, price: e.target.value })}
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
-                      <DollarSign size={16} className="text-gray-400" />
-                      Original Price (Optional)
-                    </label>
-                    <input
-                      type="number"
-                      min="0"
-                      step="0.01"
-                      placeholder="199.99"
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none"
-                      value={formData.originalprice}
-                      onChange={(e) => setFormData({ ...formData, originalprice: e.target.value })}
                     />
                   </div>
 

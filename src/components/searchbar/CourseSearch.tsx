@@ -1,5 +1,4 @@
 "use client";
-
 import { Search } from "lucide-react";
 
 interface SearchBarProps {
@@ -10,7 +9,7 @@ interface SearchBarProps {
 export function CourseSearch({ searchTerm, onSearchChange }: SearchBarProps) {
   return (
     <div className="relative mb-8">
-      <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+      <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
       <input
         type="text"
         placeholder="Search courses by title, instructor, or category..."

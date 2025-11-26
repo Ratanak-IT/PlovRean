@@ -8,11 +8,9 @@ interface Course {
   id: string;
   title: string;
   instructor_name: string;
-  price: number;
   category: string;
   image?: string;
   instructorimage?: string;
-  originalprice?: number;
   duration?: string;
 }
 
@@ -68,13 +66,6 @@ export default function CourseTable({ courses, onDelete }: CourseTableProps) {
 
       <td className="p-3 text-gray-600">{course.duration ?? "-"}</td>
 
-      <td className="p-3">
-        <div className="flex flex-col">
-          <span className="font-bold text-green-600">${course.price}</span>
-          {course.originalprice && <span className="text-xs line-through text-gray-400">${course.originalprice}</span>}
-        </div>
-      </td>
-
       <td className="p-3 text-center">
         <button
           onClick={() => setDeleteId(course.id)}
@@ -118,7 +109,6 @@ export default function CourseTable({ courses, onDelete }: CourseTableProps) {
               <th className="p-3">Instructor</th>
               <th className="p-3">Category</th>
               <th className="p-3">Duration</th>
-              <th className="p-3">Price</th>
               <th className="p-3 text-center">Action</th>
             </tr>
           </thead>
