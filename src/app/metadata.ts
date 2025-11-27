@@ -5,7 +5,7 @@ const SITE_NAME = "KneaLearn Academy";
 const DESCRIPTION =
   "Learn programming, web development, and design with professional courses in Khmer and English. Start your journey today!";
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://derlearn.vercel.app";
-const OG_IMAGE = `${SITE_URL}/og-image.jpg`;
+const OG_IMAGE = `${SITE_URL}/linkshow.png`;
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -14,8 +14,8 @@ export const metadata: Metadata = {
     template: `%s | ${SITE_NAME}`,
   },
   description: DESCRIPTION,
-  keywords: "knealearn, khmer courses, programming, react, nextjs, supabase, elearning cambodia",
-  authors: [{ name: "KneaLearn Team" }],
+  keywords: "derlearn, khmer courses, programming, react, nextjs, supabase, elearning cambodia",
+  authors: [{ name: "TEAM ISTAD" }],
   creator: SITE_NAME,
   publisher: SITE_NAME,
   robots: { index: true, follow: true },

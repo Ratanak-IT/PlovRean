@@ -13,7 +13,7 @@ export const metadata = {
     title: "KneaLearn Academy",
     description: "Cambodia's #1 platform for learning programming in Khmer",
     url: process.env.NEXT_PUBLIC_SITE_URL || "https://knealearn.vercel.app",
-    images: [{ url: "/og-image.jpg", width: 1200, height: 630 }],
+    images: [{ url: "/linkshow.png", width: 1200, height: 630 }],
     type: "website",
   },
 };
