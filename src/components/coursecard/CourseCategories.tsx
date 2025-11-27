@@ -3,7 +3,9 @@
 
 import { motion } from "framer-motion";
 import { Code2, Database, Smartphone, Brain, Cloud, Terminal } from "lucide-react";
-import OurContent from "../ourcontent/Ourcontent";
+import OurContent from "@/components/ourcontent/Ourcontent";
+
+
 // FIXED: Correct path + capital letters
    // ← This line was wrong before!
 
