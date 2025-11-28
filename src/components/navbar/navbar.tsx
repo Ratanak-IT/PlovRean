@@ -44,11 +44,11 @@ export default function Navbar() {
   }, []);
 
   const navLinks = [
-    { href: "/", name: "ទំព័រដើម" },
-    { href: "/course", name: "ថ្នាក់សិក្សា" },
-    { href: "/about", name: "អំពីយើង" },
-    { href: "/contact", name: "ទាក់ទង" },
-    ...(isLoggedIn ? [{ href: "/quiz", name: "លំហាត់" }] : []),
+    { href: "/", name: "Home" },
+    { href: "/course", name: "Courses" },
+    { href: "/about", name: "About" },
+    { href: "/contact", name: "Contact" },
+    ...(isLoggedIn ? [{ href: "/quiz", name: "Quiz" }] : []),
   ];
 
   const handleLogout = () => {

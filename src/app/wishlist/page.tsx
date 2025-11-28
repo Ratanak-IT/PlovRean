@@ -2,14 +2,16 @@
 
 import { useEffect, useState, useMemo } from "react";
 import { supabase } from "@/lib/supabaseClient";
-import { BookOpen } from "lucide-react";
+import { BookOpen, TrendingUp, Award, Clock } from "lucide-react";
 import { CourseSearch } from "@/components/searchbar/CourseSearch";
 import CourseCard from "@/components/coursecard/CourseCard";
 import { Course } from "@/types/course";
+import CourseCategoryFilter from "@/components/coursefilter/CourseCategoryFilter";
 
 export default function WishlistPage() {
   const [enrolledCourses, setEnrolledCourses] = useState<Course[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("All");
   const [loading, setLoading] = useState(true);
 
   const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!;
@@ -19,7 +21,6 @@ export default function WishlistPage() {
     async function fetchEnrolledCourses() {
       setLoading(true);
 
-      // Get user JWT from Supabase client
       const { data: { session } } = await supabase.auth.getSession();
       const token = session?.access_token;
 
@@ -30,7 +31,6 @@ export default function WishlistPage() {
       }
 
       try {
-        // 1️⃣ Fetch enrollments for this user
         const enrollRes = await fetch(
           `${SUPABASE_URL}/rest/v1/enrollments?user_id=eq.${session.user.id}&select=course_id`,
           {
@@ -41,7 +41,6 @@ export default function WishlistPage() {
           }
         );
 
-        if (!enrollRes.ok) throw new Error("Failed to fetch enrollments");
         const enrollments: { course_id: string }[] = await enrollRes.json();
 
         if (!enrollments.length) {
@@ -50,7 +49,6 @@ export default function WishlistPage() {
           return;
         }
 
-        // 2️⃣ Fetch actual courses
         const courseIds = enrollments.map(e => e.course_id).join(",");
         const coursesRes = await fetch(
           `${SUPABASE_URL}/rest/v1/courses?id=in.(${courseIds})`,
@@ -62,9 +60,7 @@ export default function WishlistPage() {
           }
         );
 
-        if (!coursesRes.ok) throw new Error("Failed to fetch courses");
         const courses: Course[] = await coursesRes.json();
-
         setEnrolledCourses(courses || []);
       } catch (err) {
         console.error("Wishlist REST API fetch error:", err);
@@ -77,14 +73,17 @@ export default function WishlistPage() {
     fetchEnrolledCourses();
   }, [SUPABASE_URL, SUPABASE_KEY]);
 
-  // Filter courses based on search term
   const filteredCourses = useMemo(() => {
-    return enrolledCourses.filter(course =>
-      course.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      course.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      course.instructor?.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-  }, [enrolledCourses, searchTerm]);
+    return enrolledCourses
+      .filter(course =>
+        course.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        course.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        course.instructor?.toLowerCase().includes(searchTerm.toLowerCase())
+      )
+      .filter(course =>
+        selectedCategory === "All" || course.category === selectedCategory
+      );
+  }, [enrolledCourses, searchTerm, selectedCategory]);
 
   return (
     <section className="bg-gray-100 dark:bg-gray-900 mt-20 min-h-screen">
@@ -98,12 +97,76 @@ export default function WishlistPage() {
           </p>
         </div>
 
-        {/* Search bar */}
-        <div className="mb-8">
-          <CourseSearch searchTerm={searchTerm} onSearchChange={setSearchTerm} />
+        {/* ⭐ Statistics boxes */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+          <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-md">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-gray-600 dark:text-gray-300 text-sm">Enrolled Courses</p>
+                <p className="text-3xl font-bold text-gray-900 dark:text-white mt-1">
+                  {enrolledCourses.length}
+                </p>
+              </div>
+              <div className="bg-blue-100 dark:bg-blue-900 p-3 rounded-lg">
+                <BookOpen className="w-6 h-6 text-blue-600" />
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-md">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-gray-600 dark:text-gray-300 text-sm">In Progress</p>
+                <p className="text-3xl font-bold text-gray-900 dark:text-white mt-1">
+                  {enrolledCourses.length}
+                </p>
+              </div>
+              <div className="bg-green-100 dark:bg-green-900 p-3 rounded-lg">
+                <TrendingUp className="w-6 h-6 text-green-600" />
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-md">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-gray-600 dark:text-gray-300 text-sm">Completed</p>
+                <p className="text-3xl font-bold text-gray-900 dark:text-white mt-1">0</p>
+              </div>
+              <div className="bg-yellow-100 dark:bg-yellow-900 p-3 rounded-lg">
+                <Award className="w-6 h-6 text-yellow-600" />
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-md">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-gray-600 dark:text-gray-300 text-sm">Hours Learned</p>
+                <p className="text-3xl font-bold text-gray-900 dark:text-white mt-1">
+                  {enrolledCourses.reduce((acc, course) => {
+                    return acc + (parseInt(course.duration) || 0);
+                  }, 0)}
+                </p>
+              </div>
+              <div className="bg-purple-100 dark:bg-purple-900 p-3 rounded-lg">
+                <Clock className="w-6 h-6 text-purple-600" />
+              </div>
+            </div>
+          </div>
         </div>
 
-        {/* Loading spinner */}
+        {/* Search + filter */}
+        <div className="mb-8 space-y-4">
+          <CourseSearch searchTerm={searchTerm} onSearchChange={setSearchTerm} />
+          <CourseCategoryFilter
+            courses={enrolledCourses}
+            selectedCategory={selectedCategory}
+            onCategoryChange={setSelectedCategory}
+          />
+        </div>
+
+        {/* Loading */}
         {loading ? (
           <div className="flex flex-col items-center justify-center py-12">
             <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-blue-600"></div>

@@ -9,7 +9,7 @@ import Image from 'next/image';
 export function HeroSection() {
   const router =useRouter();
   return (
-     <section className="relative pt-24 md:pt-32 pb-20 overflow-hidden bg-gray-100 dark:bg-[#0e0e28]">
+     <section className="relative pt-24 md:pt-32 pb-20 overflow-hidden bg-gray-100 dark:bg-gray-800">
       
       {/* Animated background */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">

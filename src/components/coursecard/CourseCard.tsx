@@ -1,8 +1,6 @@
 "use client";
 
 /* eslint-disable react-hooks/set-state-in-effect */
-// This rule is overly strict. Calling setState in effects is perfectly fine when syncing data.
-
 import { useEffect, useState } from "react";
 import { Star, Clock, Users, BookOpen } from "lucide-react";
 import Image from "next/image";
@@ -13,18 +11,66 @@ import { Course } from "@/types/course";
 interface CourseCardProps {
   searchTerm?: string;
   course?: Course;
-  limit?: number;
 }
 
-export default function CourseCard({
-  searchTerm = "",
-  course,
-  limit,
-}: CourseCardProps) {
+// 🔥 Reusable image component with fallback handler
+const CourseCardImage = ({
+  image,
+  title,
+  level,
+}: {
+  image?: string;
+  title: string;
+  level?: string;
+}) => {
+  const [imgSrc, setImgSrc] = useState(image || "/images/notfoundimg.png");
+
+  return (
+    <div className="relative h-32 overflow-hidden">
+      <Image
+        src={imgSrc}
+        alt={title}
+        width={300}
+        height={150}
+        onError={() => setImgSrc("/images/notfoundimg.png")}
+        className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+      />
+      {level && (
+        <div className="absolute top-2 right-2 bg-blue-600 text-white px-2 py-0.5 rounded-full text-xs font-medium">
+          {level}
+        </div>
+      )}
+    </div>
+  );
+};
+
+// 🔥 Custom hook for responsive limit
+function useResponsiveLimit() {
+  const [limit, setLimit] = useState(4);
+
+  useEffect(() => {
+    const updateLimit = () => {
+      const width = window.innerWidth;
+      if (width >= 1024) setLimit(8); // lg
+      else if (width >= 768) setLimit(6); // md
+      else if (width >= 640) setLimit(6); // sm
+      else setLimit(4); // mobile
+    };
+
+    updateLimit(); // initial check
+    window.addEventListener("resize", updateLimit);
+    return () => window.removeEventListener("resize", updateLimit);
+  }, []);
+
+  return limit;
+}
+
+export default function CourseCard({ searchTerm = "", course }: CourseCardProps) {
   const [courses, setCourses] = useState<Course[]>([]);
   const [filteredCourses, setFilteredCourses] = useState<Course[]>([]);
+  const limit = useResponsiveLimit();
 
-  // Fetch courses from Supabase REST API if no single course is passed
+  // Fetch courses
   useEffect(() => {
     if (course) {
       setCourses([course]);
@@ -43,7 +89,6 @@ export default function CourseCard({
             },
           }
         );
-
         const data = await res.json();
         setCourses(data || []);
         setFilteredCourses(data || []);
@@ -55,7 +100,7 @@ export default function CourseCard({
     fetchCourses();
   }, [course]);
 
-  // Filter courses by search term
+  // Filter by search term
   useEffect(() => {
     if (course) return;
     if (!searchTerm.trim()) {
@@ -64,24 +109,16 @@ export default function CourseCard({
     }
 
     const lower = searchTerm.toLowerCase();
-    const filtered = courses.filter((c) => {
-      const title = c.title?.toLowerCase() || "";
-      const category = c.category?.toLowerCase() || "";
-      const instructor = c.instructor?.toLowerCase() || "";
-      const description = c.description?.toLowerCase() || "";
-
-      return (
-        title.includes(lower) ||
-        category.includes(lower) ||
-        instructor.includes(lower) ||
-        description.includes(lower)
-      );
-    });
-
-    setFilteredCourses(filtered);
+    setFilteredCourses(
+      courses.filter((c) =>
+        [c.title, c.category, c.instructor, c.description]
+          .map((v) => v?.toLowerCase() || "")
+          .some((v) => v.includes(lower))
+      )
+    );
   }, [searchTerm, courses, course]);
 
-  // Increment views in Supabase
+  // Increment views
   const incrementViews = async (courseId: string) => {
     try {
       const { data: courseData } = await supabase
@@ -91,13 +128,9 @@ export default function CourseCard({
         .single();
 
       if (!courseData) return;
-
       const newViews = (courseData.views || 0) + 1;
 
-      await supabase
-        .from("courses")
-        .update({ views: newViews })
-        .eq("id", courseId);
+      await supabase.from("courses").update({ views: newViews }).eq("id", courseId);
     } catch (err) {
       console.error("Increment views error:", err);
     }
@@ -112,26 +145,11 @@ export default function CourseCard({
         <div key={c.id}>
           <Link
             href={`/courses/${c.id}`}
-            className="bg-white dark:bg-gray-800 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300 cursor-pointer flex flex-col overflow-hidden h-full border border-gray-200 dark:border-gray-700"
+            className="bg-white dark:bg-gray-700 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300 cursor-pointer flex flex-col overflow-hidden h-full border border-gray-200 dark:border-gray-700"
             onClick={() => incrementViews(c.id)}
           >
-            {/* Image */}
-            <div className="relative h-32 overflow-hidden">
-              <Image
-                src={c.image || "/images/course-placeholder.png"}
-                alt={c.title}
-                width={300}
-                height={150}
-                className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-              />
-              {c.level && (
-                <div className="absolute top-2 right-2 bg-blue-600 text-white px-2 py-0.5 rounded-full text-xs font-medium">
-                  {c.level}
-                </div>
-              )}
-            </div>
+            <CourseCardImage image={c.image} title={c.title} level={c.level} />
 
-            {/* Content */}
             <div className="p-4 flex flex-col flex-grow">
               <span className="text-xs text-blue-600 dark:text-blue-400 font-medium mb-1">
                 {c.category}
@@ -166,7 +184,7 @@ export default function CourseCard({
                   </div>
                   <div className="flex items-center gap-1 text-gray-500 dark:text-gray-400">
                     <Users className="w-3.5 h-3.5" />
-                    <span>{c.views?.toLocaleString() ?? "0"} views</span>
+                    <span>{c.views?.toLocaleString() ?? "0"}</span>
                   </div>
                 </div>
                 <span className="text-gray-600 dark:text-gray-300 line-clamp-1">

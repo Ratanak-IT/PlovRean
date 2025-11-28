@@ -4,6 +4,7 @@ import { useState } from "react";
 import AddCourseForm from "../api/component/AddCourseForm";
 import CourseTable from "../api/component/Coursetable";
 import { supabase } from "@/lib/supabaseClient";
+import DashboardStats from "@/components/dashboardstate/DashboardStats";
 
 interface Course {
   id: string;
@@ -26,16 +27,22 @@ export default function DashboardPage() {
 
   const fetchCourses = async () => {
     const { data, error } = await supabase.from("courses").select("*");
-    if (error) console.error(error);
-    else setCourses(data || []);
+    if (!error) setCourses(data || []);
   };
 
-  const handleLogin = () => {
-    // Set your static username/password here
-    const correctUsername = "admin";
-    const correctPassword = "admin1234";
+  const handleLogin = async () => {
+    const { data, error } = await supabase
+      .from("admin_users")
+      .select("username, password")
+      .eq("username", usernameInput)
+      .single();
 
-    if (usernameInput === correctUsername && passwordInput === correctPassword) {
+    if (error || !data) {
+      alert("Invalid username or password");
+      return;
+    }
+
+    if (passwordInput === data.password) {
       setAuthenticated(true);
       fetchCourses();
     } else {
@@ -47,19 +54,20 @@ export default function DashboardPage() {
     return (
       <div className="flex flex-col items-center justify-center h-screen space-y-4">
         <h2 className="text-2xl font-bold">Enter Dashboard Credentials</h2>
+
         <input
           type="text"
           placeholder="Username"
+          className="border px-4 py-2 rounded w-64"
           value={usernameInput}
           onChange={(e) => setUsernameInput(e.target.value)}
-          className="border px-4 py-2 rounded w-64"
         />
         <input
           type="password"
           placeholder="Password"
+          className="border px-4 py-2 rounded w-64"
           value={passwordInput}
           onChange={(e) => setPasswordInput(e.target.value)}
-          className="border px-4 py-2 rounded w-64"
         />
         <button
           onClick={handleLogin}
@@ -70,20 +78,21 @@ export default function DashboardPage() {
       </div>
     );
   }
-
   return (
     <div className="p-6 space-y-6">
-      <h1 className="text-2xl font-bold mt-[50px]">Course Dashboard</h1>
-      <button onClick={() => setOpen(true)} className="btn-primary">Add Course</button>
+    <h1 className="text-2xl font-bold mt-[50px]">Course Dashboard</h1>
 
-      {open && (
-        <AddCourseForm
-          onAdd={() => fetchCourses()}
-          onClose={() => setOpen(false)}
-        />
-      )}
+    {/* Add Course Button */}
 
-      <CourseTable courses={courses} onDelete={fetchCourses} />
-    </div>
+    {open && (
+      <AddCourseForm onAdd={fetchCourses} onClose={() => setOpen(false)} />
+    )}
+
+    {/* Dashboard Stats */}
+    <DashboardStats />
+
+    {/* Course Table */}
+    <CourseTable courses={courses} onDelete={fetchCourses} />
+  </div>
   );
 }

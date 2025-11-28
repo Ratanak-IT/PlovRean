@@ -3,11 +3,6 @@
 
 import { motion } from "framer-motion";
 import { Code2, Database, Smartphone, Brain, Cloud, Terminal } from "lucide-react";
-import OurContent from "@/components/ourcontent/OurContent";
-
-
-// FIXED: Correct path + capital letters
-   // ← This line was wrong before!
 
 const categories = [
   { icon: Code2, name: "Web Development", count: 450, color: "from-blue-400 to-cyan-500" },
@@ -20,12 +15,8 @@ const categories = [
 
 export function CourseCategories() {
   return (
-    <section className="py-16 bg-white dark:bg-gray-800">
+    <section className="py-5">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <OurContent
-          title="Explore by Category"
-          text="Choose your path and start learning today"
-        />
 
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-6 mt-10">
           {categories.map((cat, i) => (

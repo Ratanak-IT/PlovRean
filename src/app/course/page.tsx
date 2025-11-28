@@ -3,25 +3,26 @@
 import { useEffect, useState } from "react";
 import CourseCard from "@/components/coursecard/CourseCard";
 import { CourseSearch } from "@/components/searchbar/CourseSearch";
+import CourseCategoryFilter from "@/components/coursefilter/CourseCategoryFilter";
 import { BookOpen } from "lucide-react";
 import { Course } from "@/types/course";
-
 
 export default function CoursesPage() {
   const [courses, setCourses] = useState<Course[]>([]);
   const [filteredCourses, setFilteredCourses] = useState<Course[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [delayedSearch, setDelayedSearch] = useState(searchTerm);
+  const [selectedCategory, setSelectedCategory] = useState("All");
   const [loading, setLoading] = useState(true);
 
   const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!;
   const SUPABASE_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
 
+  // Small delay for search input
   useEffect(() => {
     const timeout = setTimeout(() => {
       setDelayedSearch(searchTerm);
-    }, 50); // 0.05s delay
-
+    }, 50);
     return () => clearTimeout(timeout);
   }, [searchTerm]);
 
@@ -53,24 +54,32 @@ export default function CoursesPage() {
     }
 
     fetchCourses();
-  }, [SUPABASE_KEY,SUPABASE_URL]);
+  }, [SUPABASE_KEY, SUPABASE_URL]);
 
-  // Filter courses
+  // Apply search + category filter
   useEffect(() => {
-    if (!delayedSearch.trim()) return setFilteredCourses(courses);
+    let filtered = courses;
 
-    const lower = delayedSearch.toLowerCase();
-    const filtered = courses.filter((c) =>
-      [c.title, c.category, c.instructor, c.description]
-        .map((v) => v?.toLowerCase() || "")
-        .some((v) => v.includes(lower))
-    );
+    // Search filter
+    if (delayedSearch.trim()) {
+      const lower = delayedSearch.toLowerCase();
+      filtered = filtered.filter((c) =>
+        [c.title, c.category, c.instructor, c.description]
+          .map((v) => v?.toLowerCase() || "")
+          .some((v) => v.includes(lower))
+      );
+    }
+
+    // Category filter
+    if (selectedCategory !== "All") {
+      filtered = filtered.filter((c) => c.category === selectedCategory);
+    }
 
     setFilteredCourses(filtered);
-  }, [delayedSearch, courses]);
+  }, [delayedSearch, selectedCategory, courses]);
 
   return (
-    <div className="dark:bg-gray-900 bg-gray-100 min-h-screen py-12">
+    <div className="dark:bg-gray-900 bg-gray-100 min-h-screen pt-25">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-8">
           All Courses
@@ -79,7 +88,14 @@ export default function CoursesPage() {
         {/* Search Bar */}
         <CourseSearch searchTerm={searchTerm} onSearchChange={setSearchTerm} />
 
-        {/* Loading */}
+        {/* Category Filter */}
+        <CourseCategoryFilter
+          courses={courses}
+          selectedCategory={selectedCategory}
+          onCategoryChange={setSelectedCategory}
+        />
+
+        {/* Loading / Empty / Courses Grid */}
         {loading ? (
           <div className="grid gap-4 grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 mt-6">
             {Array.from({ length: 8 }).map((_, i) => (
@@ -102,7 +118,7 @@ export default function CoursesPage() {
             </p>
           </div>
         ) : (
-          <div className="grid gap-4 grid-cols-2 sm:grid-cols-3 md:grid-cols-4 mt-4 transition-opacity duration-300">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-10 transition-opacity duration-300">
             {filteredCourses.map((course) => (
               <CourseCard
                 key={course.id}
@@ -110,7 +126,8 @@ export default function CoursesPage() {
                   ...course,
                   title: course.title ?? "Untitled Course",
                   instructor: course.instructor ?? "Unknown Instructor",
-                  description: course.description ?? "No description available",
+                  description:
+                    course.description ?? "No description available",
                   duration: course.duration ?? "N/A",
                   lessons: course.lessons ?? 0,
                   rating: course.rating ?? 4.8,

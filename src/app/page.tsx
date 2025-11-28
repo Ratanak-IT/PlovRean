@@ -1,11 +1,4 @@
-// app/page.tsx
-import { HeroSection } from "@/components/hero/HeroSection";
-import { CourseCategories } from "@/components/coursecard/CourseCategories";
-import CourseCard from "@/components/coursecard/CourseCard";
-import OurContent from "@/components/ourcontent/OurContent";
-// FIXED: Correct import
-  // ← This was wrong!
-
+import HomeIndex from "@/components/homepage/HomeIndex";
 export const metadata = {
   title: "KneaLearn Academy - Learn Programming & Design in Khmer",
   description: "Master React, Node.js, web design & more with courses in Khmer and English.",
@@ -20,21 +13,7 @@ export const metadata = {
 
 export default function Home() {
   return (
-    <>
-      <HeroSection />
-      <CourseCategories />
 
-      <section className="bg-gray-100 dark:bg-gray-900 py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <OurContent
-            title="Featured Courses"
-            text="Hand-picked courses to help you become a pro developer"
-          />
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mt-10">
-            <CourseCard limit={8} />
-          </div>
-        </div>
-      </section>
-    </>
+        <HomeIndex />
   );
 }
