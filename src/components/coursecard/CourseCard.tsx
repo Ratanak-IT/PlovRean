@@ -145,7 +145,7 @@ export default function CourseCard({ searchTerm = "", course }: CourseCardProps)
         <div key={c.id}>
           <Link
             href={`/courses/${c.id}`}
-            className="bg-white dark:bg-gray-700 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300 cursor-pointer flex flex-col overflow-hidden h-full border border-gray-200 dark:border-gray-700"
+            className="bg-white dark:bg-gray-800 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300 cursor-pointer flex flex-col overflow-hidden h-full border border-gray-200 dark:border-gray-700"
             onClick={() => incrementViews(c.id)}
           >
             <CourseCardImage image={c.image} title={c.title} level={c.level} />

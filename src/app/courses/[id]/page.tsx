@@ -5,7 +5,7 @@ import { supabase } from "@/lib/supabaseClient";
 import { Star, Clock, PlayCircle, CheckCircle } from "lucide-react";
 import BackButton from "@/components/backbutton/BackButton";
 import EnrollButton from "@/components/enrollbutton/EnrollButton";
-import { CourseDetailBanner } from "@/components/coursedetailbanner/CourseDetailBanner";
+import { CourseDetailBanner } from "@/components/banner/CourseDetailBanner";
 import { Course } from "@/types/course";
 
 export const revalidate = 60; // ISR cache
