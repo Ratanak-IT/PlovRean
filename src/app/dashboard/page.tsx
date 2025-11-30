@@ -23,7 +23,7 @@ export default function DashboardPage() {
   const [usernameInput, setUsernameInput] = useState("");
   const [passwordInput, setPasswordInput] = useState("");
   const [courses, setCourses] = useState<Course[]>([]);
-  const [open, setOpen] = useState(false);
+  const [ ] = useState(false);
 
   const fetchCourses = async () => {
     const { data, error } = await supabase.from("courses").select("*");
@@ -84,7 +84,7 @@ export default function DashboardPage() {
 
       {/* Add Course Button */}
 
-      <AddCourseForm onAdd={fetchCourses} onClose={() => setOpen(false)} />
+      <AddCourseForm onAdd={fetchCourses} />
 
       {/* Dashboard Stats */}
       <DashboardStats />
