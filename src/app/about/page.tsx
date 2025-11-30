@@ -14,14 +14,14 @@ const values = [
 ];
 
 const team = [
-  { name: "Thai Ratanak", role: "Front-end & Backend", desc: "Ex-Google Engineer • Education Advocate", img: "/team/thai.jpg" },
-  { name: "Michael Chen", role: "Head of Curriculum", desc: "15+ years teaching CS at top universities", img: "/team/michael.jpg" },
-  { name: "Emily Rodriguez", role: "Lead Developer", desc: "Full-stack architect behind the platform", img: "/team/emily.jpg" },
-  { name: "David Kim", role: "Community Manager", desc: "Building the most inclusive coding community", img: "/team/david.jpg" },
-  { name: "David Kim", role: "Community Manager", desc: "Building the most inclusive coding community", img: "/team/david.jpg" },
-  { name: "David Kim", role: "Community Manager", desc: "Building the most inclusive coding community", img: "/team/david.jpg" },
-  { name: "David Kim", role: "Community Manager", desc: "Building the most inclusive coding community", img: "/team/david.jpg" },
-  { name: "David Kim", role: "Community Manager", desc: "Building the most inclusive coding community", img: "/team/david.jpg" },
+  { name: "Thai Ratanak", role: "Front-end & Backend", img: "/images/ratanak.png" },
+  { name: "Chhom Titsela", role: "Footer & Auth", img: "/images/sela.png" },
+  { name: "Chanthol Vireakratanak", role: "Banner", img: "/images/virakratanak.png" },
+  { name: "Hin Somphors", role: "Footer", img: "/images/sompors.png" },
+  { name: "Hean Sitha", role: "Detail page", img: "/images/sitha.png" },
+  { name: "Chit Chimy", role: "UI Design", img: "/images/chimy.png" },
+  { name: "Path Minea", role: "Quiz page", img: "/images/minea.png" },
+  { name: "Huort LeangHom", role: "Wishlist", img: "/images/leanghorm.png" },
 ];
 
 const roadmapSteps = [
@@ -31,14 +31,6 @@ const roadmapSteps = [
   { phase: "Phase 4", title: "Advanced Topics", duration: "Weeks 21–28", topics: ["TypeScript", "Testing", "DevOps"], color: "from-orange-500 to-red-500" },
   { phase: "Phase 5", title: "Specialization", duration: "Weeks 29–36", topics: ["Mobile", "Data Science", "AI/ML"], color: "from-indigo-500 to-purple-500" },
   { phase: "Phase 6", title: "Career Ready", duration: "Weeks 37–40", topics: ["Portfolio", "Interviews", "Job Hunt"], color: "from-rose-500 to-pink-500" },
-];
-
-const milestones = [
-  { year: "2020", event: "PlovRean Founded", desc: "Started with 10 free courses" },
-  { year: "2021", event: "10K Students", desc: "First major milestone" },
-  { year: "2022", event: "50+ Courses", desc: "Massive curriculum expansion" },
-  { year: "2023", event: "50K Students", desc: "Community grew 5×" },
-  { year: "2024", event: "100K+ Students", desc: "Leading free platform" },
 ];
 
 export default function AboutPage() {
@@ -259,105 +251,101 @@ export default function AboutPage() {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
-          {team.map((member, i) => (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.1 }}
-              className="text-center group"
-            >
-              {/* Image */}
-              <div className="w-32 h-32 mx-auto mb-6 rounded-full overflow-hidden border-4 border-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 p-1">
-                <Image
-                  src={member.img}
-                  alt={member.name}
-                  className="w-full h-full object-cover rounded-full"
-                  width={900}
-                  height={900}
-                />
-              </div>
+  {team.map((member, i) => (
+    <motion.div
+      key={i}
+      initial={{ opacity: 0, y: 40 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.6, delay: i * 0.15, ease: "easeOut" }}
+      className="text-center group relative"
+    >
+      {/* === Small Avatar === */}
+      <div className="relative w-40 h-40 mx-auto mb-6 cursor-pointer">
+        {/* Hover glow ring */}
+        <div className="absolute -inset-2 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 
+                        rounded-full blur-xl opacity-0 group-hover:opacity-70 
+                        transition-all duration-500 group-hover:scale-110" />
 
-              <h3 className="text-xl font-bold">{member.name}</h3>
-              <p className="text-indigo-600 dark:text-indigo-400 font-medium mb-2">{member.role}</p>
-              <p className="text-sm text-gray-600 dark:text-gray-400">{member.desc}</p>
-            </motion.div>
-          ))}
+        {/* Avatar */}
+        <div className="relative w-full h-full rounded-full overflow-hidden 
+                        ring-4 ring-white dark:ring-gray-900 shadow-2xl 
+                        group-hover:ring-8 group-hover:shadow-3xl transition-all duration-400">
+          <Image
+            src={member.img}
+            alt={member.name}
+            width={900}
+            height={900}
+            className="w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-110"
+          />
         </div>
+
+        {/* ONLINE INDICATOR - Beautiful & Modern */}
+        {member && (
+          <div className="absolute bottom-3 right-3">
+            <span className="relative flex h-9 w-9">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+              <span className="relative inline-flex rounded-full h-9 w-9 bg-emerald-500 border-4 border-white dark:border-gray-900 shadow-lg" />
+            </span>
+          </div>
+        )}
+      </div>
+
+      {/* Name & Role */}
+      <h3 className="text-xl font-bold text-gray-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
+        {member.name}
+      </h3>
+      <p className="text-indigo-600 dark:text-indigo-400 font-medium mt-1">{member.role}</p>
+
+      {/* === BIG FULL PORTRAIT ON HOVER === */}
+      <div className="pointer-events-none fixed inset-0 flex items-center justify-center z-50 
+                      opacity-0 scale-90 group-hover:opacity-100 group-hover:scale-100 
+                      transition-all duration-500 ease-out">
+        <div className="relative">
+          {/* Backdrop blur */}
+          <div className="absolute inset-0 bg-black/50 backdrop-blur-lg rounded-3xl" />
+          
+          {/* Large portrait - FULL head + shoulders */}
+          <div className="relative rounded-3xl overflow-hidden shadow-2xl ring-8 ring-white/90">
+            <Image
+              src={member.img}
+              alt={member.name}
+              width={540}
+              height={660}
+              className="w-[420px] h-[540px] sm:w-[480px] sm:h-[600px] object-cover object-top"
+              priority
+            />
+            
+            {/* Online badge on large image too */}
+            {member && (
+              <div className="absolute top-6 right-6">
+                <span className="relative flex h-12 w-12">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-80" />
+                  <span className="relative inline-flex rounded-full h-12 w-12 bg-emerald-500 border-4 border-white shadow-xl" />
+                </span>
+                <span className="absolute -bottom-8 left-1/2 -translate-x-1/2 text-white text-sm font-medium bg-black/60 px-3 py-1 rounded-full">
+                  Online now
+                </span>
+              </div>
+            )}
+          </div>
+
+          {/* Name tag */}
+          <div className="absolute -bottom-16 left-1/2 -translate-x-1/2 
+                          bg-white dark:bg-gray-900 px-10 py-5 rounded-full 
+                          shadow-2xl border border-gray-200 dark:border-gray-700">
+            <p className="text-2xl font-bold text-gray-900 dark:text-white">{member.name}</p>
+            <p className="text-base font-medium text-gray-600 dark:text-gray-400">{member.role}</p>
+          </div>
+        </div>
+      </div>
+    </motion.div>
+  ))}
+</div>
       </div>
     </section>
 
-      {/* JOURNEY TIMELINE */}
-      <section className="py-20 lg:py-32 bg-gray-50 dark:bg-gray-900/50">
-  <div className="max-w-5xl mx-auto px-6 lg:px-8">
-    <div className="text-center mb-16">
-      <h2 className="text-4xl lg:text-6xl font-bold mb-4">Our Journey So Far</h2>
-      <p className="text-xl text-gray-600 dark:text-gray-400">
-        From a dream in 2020 to empowering 100K+ developers worldwide
-      </p>
-    </div>
-
-    <div className="relative">
-      {/* Central Line */}
-      <div className="absolute left-8 lg:left-1/2 top-0 bottom-0 w-1 bg-gradient-to-b from-indigo-400 via-purple-500 to-pink-500 rounded-full hidden sm:block" />
-
-      <div className="space-y-16">
-        {milestones.map((milestone, index) => (
-          <motion.div
-            key={index}
-            initial={{ opacity: 0, y: 50 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: index * 0.15 }}
-            viewport={{ once: true }}
-            className={`relative flex items-center gap-8 ${
-              index % 2 === 0 ? "lg:flex" : "lg:flex lg:flex-row-reverse"
-            }`}
-          >
-            {/* Timeline Dot */}
-            <div className="absolute left-8 lg:left-1/2 -translate-x-1/2 w-16 h-16 bg-gray-100 dark:bg-gray-900 rounded-full border-4 border-indigo-500 shadow-xl flex items-center justify-center z-10">
-              <div className="w-8 h-8 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full animate-pulse" />
-            </div>
-
-            {/* Card */}
-            <div
-              className={`w-full lg:w-5/12 ${
-                index % 2 === 0 ? "lg:pr-16 lg:text-right" : "lg:pl-16"
-              }`}
-            >
-              <div className="bg-gray-100 dark:bg-gray-800 rounded-3xl p-8 shadow-xl hover:shadow-2xl transition-all duration-300 border border-gray-200 dark:border-gray-700">
-                <div className="text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400 mb-3">
-                  {milestone.year}
-                </div>
-                <h3 className="text-2xl font-bold mb-3 text-gray-900 dark:text-white">
-                  {milestone.event}
-                </h3>
-                <p className="text-lg text-gray-600 dark:text-gray-300">
-                  {milestone.desc}
-                </p>
-
-                {/* Decorative badge */}
-                <div className="mt-6 inline-flex items-center gap-3 px-4 py-2 rounded-full bg-gradient-to-r from-indigo-100 to-purple-100 dark:from-indigo-900/50 dark:to-purple-900/50">
-                  <div className="w-3 h-3 bg-indigo-500 rounded-full animate-ping" />
-                  <span className="text-sm font-medium text-indigo-700 dark:text-indigo-300">
-                    Milestone #{index + 1}
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            {/* Empty spacer for alignment */}
-            <div className="hidden lg:block lg:w-5/12" />
-          </motion.div>
-        ))}
-      </div>
-
-      {/* Final Dot */}
-      <div className="absolute left-8 lg:left-1/2 -translate-x-1/2 bottom-0 w-16 h-16 bg-gradient-to-br from-pink-500 to-rose-600 rounded-full shadow-2xl flex items-center justify-center">
-        <Heart className="w-8 h-8 text-white animate-pulse" />
-      </div>
-    </div>
-  </div>
-</section>
+      
     </div>
   );
 }
