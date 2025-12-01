@@ -295,14 +295,14 @@ export default function AccountPage() {
             <div className="flex flex-col sm:flex-row items-start sm:items-end gap-8 -mt-20 mb-8">
               {/* Avatar */}
               <div className="relative group">
-                <div className="w-40 h-40 rounded-2xl border-8 border-white dark:border-gray-800 bg-gray-200 dark:bg-gray-700 overflow-hidden shadow-2xl ring-4 ring-gray-50 dark:ring-gray-900">
+                <div className="w-45 h-45 rounded-full border-1 border-white dark:border-gray-800 bg-gray-200 dark:bg-gray-700 overflow-hidden shadow-2xl ring-4 ring-gray-50 dark:ring-gray-900">
                   <Image
-  src={avatarUrl || "/default-avatar.png"}
-  alt="Avatar"
-  width={160}
-  height={160}
-  className="w-full h-full object-cover"
-/>
+                    src={avatarUrl || "/default-avatar.png"}
+                    alt="Avatar"
+                    width={160}
+                    height={160}
+                    className="w-full h-full object-cover"
+                  />
                 </div>
                 {isEditing && (
                   <label className="absolute bottom-3 right-3 bg-indigo-600 text-white p-3 rounded-xl cursor-pointer hover:scale-110 transition shadow-lg">

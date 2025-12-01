@@ -37,9 +37,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 style: { background: "#13cd35", color: "#fff", borderRadius: "10px" },
               }}
             />
+            <Footer/>
           </WishlistProvider>
         </UserProvider>
-        <Footer/>
       </body>
     </html>
     

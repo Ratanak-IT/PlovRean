@@ -1,6 +1,6 @@
 "use client";
 
-import { Eye, EyeOff, Chrome } from "lucide-react";
+import { Eye, EyeOff, Chrome, Sun, Moon } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
@@ -16,12 +16,21 @@ export default function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [theme, setTheme] = useState("light");
 
-  // Email/password login
+  // theme toggle
+  const toggleTheme = () => {
+    const newTheme = theme === "light" ? "dark" : "light";
+    setTheme(newTheme);
+    document.documentElement.classList.toggle("dark", newTheme === "dark");
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
-    if (!email || !password) return setError("Email and password are required");
+
+    if (!email || !password)
+      return setError("Email and password are required");
 
     setLoading(true);
     try {
@@ -40,16 +49,13 @@ export default function LoginForm() {
 
       toast.success("Login successful 🎉");
       setLoading(false);
-
       router.push("/");
     } catch (_err) {
-      console.error(_err);
       setLoading(false);
       setError("Something went wrong. Try again later.");
     }
   };
 
-  // Google login
   const handleGoogleLogin = async () => {
     setError("");
     setLoading(true);
@@ -66,30 +72,42 @@ export default function LoginForm() {
         return setError(supabaseError.message);
       }
     } catch (_err) {
-      console.error(_err);
       setLoading(false);
       setError("Google login failed. Try again.");
     }
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-100 p-4">
-      <Toaster position="top-right" reverseOrder={false} />
+    <div className="flex min-h-screen items-center justify-center bg-gray-100 dark:bg-gray-900 p-4 transition-colors">
+      <Toaster position="top-right" />
 
-      <div className="bg-white shadow-lg rounded-xl p-6 w-full max-w-sm">
+      {/* Theme Toggle */}
+      <button
+        onClick={toggleTheme}
+        className="absolute top-4 right-4 p-2 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white shadow"
+      >
+        {theme === "light" ? <Moon size={20} /> : <Sun size={20} />}
+      </button>
+
+      <div className="bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 shadow-lg rounded-xl p-6 w-full max-w-sm transition-colors">
         <h2 className="text-xl font-bold mb-1">Login</h2>
-        <p className="text-gray-500 mb-4 text-sm">Login to your account to continue</p>
+        <p className="text-gray-500 dark:text-gray-400 mb-4 text-sm">
+          Login to your account to continue
+        </p>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label htmlFor="email" className="text-sm font-medium text-gray-700">
+            <label
+              htmlFor="email"
+              className="text-sm font-medium text-gray-700 dark:text-gray-300"
+            >
               Email
             </label>
             <input
               id="email"
               type="email"
               placeholder="m@example.com"
-              className="w-full mt-1 border rounded-md p-2 focus:ring-blue-500 focus:border-blue-500"
+              className="w-full mt-1 border dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-md p-2"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
@@ -97,7 +115,10 @@ export default function LoginForm() {
           </div>
 
           <div>
-            <label htmlFor="password" className="text-sm font-medium text-gray-700">
+            <label
+              htmlFor="password"
+              className="text-sm font-medium text-gray-700 dark:text-gray-300"
+            >
               Password
             </label>
             <div className="relative">
@@ -105,7 +126,7 @@ export default function LoginForm() {
                 id="password"
                 type={showPassword ? "text" : "password"}
                 placeholder="********"
-                className="w-full mt-1 border rounded-md p-2 pr-10"
+                className="w-full mt-1 border dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-md p-2 pr-10"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
@@ -113,7 +134,7 @@ export default function LoginForm() {
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-black"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-300"
               >
                 {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
               </button>
@@ -121,14 +142,14 @@ export default function LoginForm() {
           </div>
 
           {error && (
-            <div className="text-red-600 text-sm border border-red-400 bg-red-50 p-2 rounded-md">
+            <div className="text-red-600 dark:text-red-400 text-sm border border-red-400 dark:border-red-500 bg-red-50 dark:bg-red-900 p-2 rounded-md">
               {error}
             </div>
           )}
 
           <button
             type="submit"
-            className="w-full bg-black text-white rounded-md p-2 hover:bg-gray-900 disabled:opacity-50"
+            className="w-full bg-black dark:bg-gray-700 text-white rounded-md p-2 hover:bg-gray-900 dark:hover:bg-gray-600 disabled:opacity-50"
             disabled={loading}
           >
             {loading ? "Logging in..." : "Login"}
@@ -138,7 +159,7 @@ export default function LoginForm() {
         <div className="mt-4">
           <button
             onClick={handleGoogleLogin}
-            className="w-full border border-gray-300 rounded-md p-2 flex items-center justify-center gap-2 hover:bg-gray-100"
+            className="w-full border border-gray-300 dark:border-gray-600 rounded-md p-2 flex items-center justify-center gap-2 hover:bg-gray-100 dark:hover:bg-gray-700"
             disabled={loading}
           >
             <Chrome size={18} />
@@ -146,9 +167,9 @@ export default function LoginForm() {
           </button>
         </div>
 
-        <div className="mt-4 text-center text-sm">
+        <div className="mt-4 text-center text-sm text-gray-700 dark:text-gray-300">
           Do not have an account?{" "}
-          <Link href="/register" className="text-blue-600 hover:underline">
+          <Link href="/register" className="text-blue-600 dark:text-blue-400 hover:underline">
             Create one
           </Link>
         </div>

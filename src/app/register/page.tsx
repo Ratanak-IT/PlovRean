@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
-import { Eye, EyeOff, Chrome } from "lucide-react";
+import { Eye, EyeOff, Chrome, Sun, Moon } from "lucide-react";
 import toast, { Toaster } from "react-hot-toast";
 import Link from "next/link";
 
@@ -15,6 +15,15 @@ export default function RegisterPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+
+  const [theme, setTheme] = useState("light");
+
+  // theme toggle switch
+  const toggleTheme = () => {
+    const newTheme = theme === "light" ? "dark" : "light";
+    setTheme(newTheme);
+    document.documentElement.classList.toggle("dark", newTheme === "dark");
+  };
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -70,16 +79,25 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-100 dark:bg-gray-900 p-4">
-      <Toaster position="top-right" reverseOrder={false} />
-      <div className="bg-white dark:bg-gray-800 shadow-lg rounded-xl p-6 w-full max-w-sm">
-        <h2 className="text-xl font-bold mb-1 text-gray-900 dark:text-white">Register</h2>
-        <p className="text-gray-500 dark:text-gray-300 mb-4 text-sm">
+    <div className="flex min-h-screen items-center justify-center bg-gray-100 dark:bg-gray-900 p-4 transition-colors">
+      <Toaster position="top-right" />
+
+      {/* Theme Toggle */}
+      <button
+        onClick={toggleTheme}
+        className="absolute top-4 right-4 p-2 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white shadow"
+      >
+        {theme === "light" ? <Moon size={20} /> : <Sun size={20} />}
+      </button>
+
+      <div className="bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 shadow-lg rounded-xl p-6 w-full max-w-sm transition-colors">
+        <h2 className="text-xl font-bold mb-1">Register</h2>
+        <p className="text-gray-500 dark:text-gray-400 mb-4 text-sm">
           Create a new account to continue
         </p>
 
         {error && (
-          <div className="text-red-600 text-sm border border-red-400 bg-red-50 p-2 rounded-md mb-4">
+          <div className="text-red-600 dark:text-red-400 text-sm border border-red-400 dark:border-red-500 bg-red-50 dark:bg-red-900 p-2 rounded-md mb-4">
             {error}
           </div>
         )}
@@ -87,14 +105,13 @@ export default function RegisterPage() {
         <form onSubmit={handleRegister} className="space-y-4">
           {/* Full Name */}
           <div>
-            <label htmlFor="fullName" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               Full Name
             </label>
             <input
-              id="fullName"
               type="text"
               placeholder="Your full name"
-              className="w-full border rounded-md p-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+              className="w-full border dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-md p-2"
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
             />
@@ -102,14 +119,13 @@ export default function RegisterPage() {
 
           {/* Email */}
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               Email
             </label>
             <input
-              id="email"
               type="email"
               placeholder="m@example.com"
-              className="w-full border rounded-md p-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+              className="w-full border dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-md p-2"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
@@ -117,22 +133,21 @@ export default function RegisterPage() {
 
           {/* Password */}
           <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               Password
             </label>
             <div className="relative">
               <input
-                id="password"
                 type={showPassword ? "text" : "password"}
                 placeholder="********"
-                className="w-full border rounded-md p-2 pr-10 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                className="w-full border dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-md p-2 pr-10"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-black dark:text-gray-300"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-300"
               >
                 {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
               </button>
@@ -142,26 +157,31 @@ export default function RegisterPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-black text-white rounded-md p-2 hover:bg-gray-900 disabled:opacity-50"
+            className="w-full bg-black dark:bg-gray-700 text-white rounded-md p-2 hover:bg-gray-900 dark:hover:bg-gray-600 disabled:opacity-50"
           >
             {loading ? "Registering..." : "Register"}
           </button>
         </form>
 
-        {/* OR */}
+        {/* Google */}
         <div className="mt-4">
           <button
             onClick={handleGoogleRegister}
             disabled={loading}
-            className="w-full border border-gray-300 rounded-md p-2 flex items-center justify-center gap-2 hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-50"
+            className="w-full border border-gray-300 dark:border-gray-600 rounded-md p-2 flex items-center justify-center gap-2 hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-50"
           >
-            <Chrome size={18} /> Continue with Google
+            <Chrome size={18} />
+            Continue with Google
           </button>
         </div>
 
-        <div className="mt-4 text-center text-sm text-gray-500 dark:text-gray-300">
+        {/* Already have an account? */}
+        <div className="mt-4 text-center text-sm text-gray-700 dark:text-gray-300">
           Already have an account?{" "}
-          <Link href="/login" className="text-blue-600 hover:underline">
+          <Link
+            href="/login"
+            className="text-blue-600 dark:text-blue-400 hover:underline"
+          >
             Login
           </Link>
         </div>
@@ -169,3 +189,4 @@ export default function RegisterPage() {
     </div>
   );
 }
+
