@@ -9,7 +9,7 @@ export default function HeroSection() {
   const router = useRouter();
 
   return (
-    <section className="relative min-h-screen pt-20 pb-16 overflow-hidden bg-gradient-to-br from-gray-50 via-white to-indigo-50 dark:from-[#0a0e17] dark:via-[#0d1117] dark:to-[#0a0e17]">
+    <section className="relative pt-20 overflow-hidden bg-gradient-to-br from-gray-50 via-white to-indigo-50 dark:from-[#0a0e17] dark:via-[#0d1117] dark:to-[#0a0e17]">
       
       {/* Animated Background Orbs – Subtle & Stunning */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">

@@ -1,3 +1,6 @@
+
+
+import BannerHeroSection from "../banner/HeroSectionBanner";
 import CourseCard from "../coursecard/CourseCard";
 import { CourseCategories } from "../coursecard/CourseCategories";
 import HeroSection from "../hero/HeroSection";
@@ -15,6 +18,7 @@ export default function HomeIndex() {
           text="Choose your path and start learning today"
         />
         <CourseCategories />
+          <BannerHeroSection/>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <OurContent
             title="Featured Courses"

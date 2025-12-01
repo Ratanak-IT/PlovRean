@@ -9,7 +9,7 @@ import DashboardStats from "@/components/dashboardstate/DashboardStats";
 interface Course {
   id: string;
   title: string;
-  instructor_name: string;
+  instructor: string;
   price: number;
   category: string;
   image?: string;

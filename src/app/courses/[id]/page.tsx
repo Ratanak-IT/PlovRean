@@ -32,20 +32,20 @@ export default async function CourseDetailPage({ params }: PageProps) {
   if (error || !course) notFound();
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 dark:text-white mt-10">
-      <section className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 text-white">
-        <div className="max-w-7xl mx-auto px-6 py-12 lg:py-20 grid lg:grid-cols-2 gap-12 items-start">
+    <div className="bg-gray-50 dark:bg-gray-900 dark:text-white mt-10">
+      <section className="bg-[#434772] text-white">
+        <div className="max-w-7xl mx-auto px-6 py-12 grid lg:grid-cols-2 gap-5 items-start">
           <div className="space-y-8">
             <BackButton />
             <div className="inline-block px-4 py-2 bg-white/20 backdrop-blur rounded-full text-sm font-medium">
               {course.category}
             </div>
 
-            <h1 className="text-4xl lg:text-6xl font-bold leading-tight">
+            <h1 className="text-3xl lg:text-4xl font-bold leading-tight">
               {course.title}
             </h1>
 
-            <p className="text-lg lg:text-xl text-white/90 max-w-2xl">
+            <p className="text-md lg:text-lg text-white/90 max-w-2xl">
               {course.description}
             </p>
 
@@ -68,11 +68,11 @@ export default async function CourseDetailPage({ params }: PageProps) {
           </div>
 
           {/* Hero Image */}
-          <div className="relative rounded-2xl overflow-hidden shadow-2xl">
+          <div className="relative rounded-2xl overflow-hidden">
             <Image
               src={course.image || "/images/course-placeholder.png"}
               alt={course.title}
-              width={1200}
+              width={500}
               height={600}
               className="w-full h-auto"
               priority

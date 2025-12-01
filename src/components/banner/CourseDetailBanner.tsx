@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from "react";
 import {
-  ChevronLeft,
-  ChevronRight,
+  // ChevronLeft,
+  // ChevronRight,
   Trophy,
   Zap,
   Clock,
@@ -61,10 +61,10 @@ export function CourseDetailBanner({
     return () => clearInterval(interval);
   }, []);
 
-  const goPrev = () =>
-    setCurrentIndex((prev) => (prev - 1 + highlights.length) % highlights.length);
-  const goNext = () =>
-    setCurrentIndex((prev) => (prev + 1) % highlights.length);
+  // const goPrev = () =>
+  //   setCurrentIndex((prev) => (prev - 1 + highlights.length) % highlights.length);
+  // const goNext = () =>
+  //   setCurrentIndex((prev) => (prev + 1) % highlights.length);
 
   return (
     <div className="relative bg-white dark:bg-gray-800 rounded-xl shadow-sm mb-8 overflow-hidden">
@@ -123,7 +123,7 @@ export function CourseDetailBanner({
           </div>
         ))}
 
-        <button
+        {/* <button
           onClick={goPrev}
           className="absolute left-3 top-1/2 -translate-y-1/2 p-2 bg-white/120 dark:bg-white/40 rounded-full shadow-md"
         >
@@ -134,7 +134,7 @@ export function CourseDetailBanner({
           className="absolute right-3 top-1/2 -translate-y-1/2 p-2 bg-white/120 dark:bg-white/40 rounded-full shadow-md"
         >
           <ChevronRight className="h-5 w-5" />
-        </button>
+        </button> */}
       </div>
     </div>
   );

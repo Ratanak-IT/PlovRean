@@ -461,28 +461,46 @@ export default function QuizPage({ }: QuizPageProps) {
 
   if (!selectedTopic) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pt-20">
+      <div className="min-h-screen bg-[#E7E9ED] dark:bg-gray-900 pt-20">
         {/* Hero Section */}
-        <section className="bg-gradient-to-br from-indigo-500 to-purple-600 text-white py-16 md:py-24">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-              className="text-center"
-            >
-              <div className="flex items-center justify-center gap-3 mb-4">
-                <div className="w-14 h-14 bg-white/20 rounded-xl flex items-center justify-center">
-                  <Sparkles className="w-7 h-7 text-white" />
-                </div>
-                <h1 className="text-white">AI-Powered Quiz Challenge</h1>
-              </div>
-              <p className="text-indigo-100 max-w-2xl mx-auto">
-                Test your coding knowledge with our AI-generated quizzes. Choose a topic and challenge yourself!
-              </p>
-            </motion.div>
-          </div>
-        </section>
+        <section className="relative py-16 md:py-24 text-center overflow-hidden bg-gray-100 dark:bg-gray-900">
+  {/* Background Floating Orbs */}
+  <div className="absolute inset-0 overflow-hidden">
+    <div className="absolute -top-32 -left-32 w-72 h-72 bg-emerald-400/20 dark:bg-emerald-500/20 rounded-full blur-3xl animate-float-slow" />
+    <div
+      className="absolute top-16 right-16 w-64 h-64 bg-cyan-400/20 dark:bg-cyan-500/20 rounded-full blur-3xl animate-float"
+      style={{ animationDelay: "2s" }}
+    />
+    <div
+      className="absolute bottom-8 left-1/3 w-56 h-56 bg-purple-400/20 dark:bg-purple-500/20 rounded-full blur-3xl animate-float"
+      style={{ animationDelay: "4s" }}
+    />
+  </div>
+
+  {/* Hero Content */}
+  <div className="relative z-10 px-4 sm:px-6 lg:px-8">
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6 }}
+      className="flex flex-col items-center gap-4 max-w-3xl mx-auto"
+    >
+      <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-4">
+        <div className="w-14 h-14 bg-white/20 dark:bg-gray-800 rounded-xl flex items-center justify-center">
+          <Sparkles className="w-7 h-7 text-white" />
+        </div>
+        <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white">
+          AI-Powered Quiz Challenge
+        </h1>
+      </div>
+      <p className="text-gray-700 dark:text-gray-300 text-base sm:text-lg max-w-2xl mx-auto">
+        Test your coding knowledge with our AI-generated quizzes. Choose a topic and challenge yourself!
+      </p>
+    </motion.div>
+  </div>
+</section>
+
+
 
         {/* Topic Selection */}
         <section className="py-12 md:py-16">
