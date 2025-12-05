@@ -74,6 +74,7 @@ cd DerRean
 2. **Install dependencies**
 ```bash
 npm install
+npm run build
 3. **Create .env.local file**
 NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
